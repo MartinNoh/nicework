@@ -30,7 +30,7 @@ SECRET_KEY = str(os.environ.get("SECRET_KEY", default='django-insecure-9-bnu3nu+
 DEBUG = int(os.environ.get("DEBUG", default=0))
 
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', 'donggyeong.iptime.org']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', 'donggyeong.iptime.org', '52.78.2.223', 'nicewor.kr']
 
 
 # Application definition
