@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block content %}
+<section id="about" class="d-flex align-items-center">
+    <div class="container">
+      <div class="row">
+        <div class="container col-lg-2"></div>
+        <div class="container col-lg-8">
+            <div class="mb-3" style="text-align: center;">
+                <h3><b>My Page</b></h3>
+            </div>
+
+            <form method="get" action="{% url 'common:password' %}">
+                <div class="mb-3">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td style="width: 80%;">
+                                <label for="email">이메일</label>
+                                <input type="text" class="form-control" name="email" id="email" readonly
+                                    value="{{ email|default_if_none:'' }}">
+                            </td>
+                            <td style="width: 1%;"></td>
+                            <td style="width: 19%; vertical-align: bottom; text-align: right;">
+                                
+                                <button class="btn btn-primary" style="width: 100%;">비밀번호 변경</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </form>
+
+            <form method="post" action="{% url 'common:mypage' %}">
+                {% csrf_token %}
+                {% include "form_errors.html" %}
+
+                <div class="mb-3">
+                    <label for="realname">이름</label>
+                    <input type="text" class="form-control" name="realname" id="realname"
+                    	value="{{ form.realname.value|default_if_none:'' }}">                            
+                </div>
+                <div class="mb-3"><label for="phonenum">휴대폰 번호</label>
+                    <input type="text" class="form-control" name="phonenum" id="phonenum"
+                        value="{{ form.phonenum.value|default_if_none:'' }}">
+                </div>
+                <div class="mb-3">
+                    <label for="effcdate">입사 일자</label>
+                    {% if is_fine %}
+                    <input type="date" class="form-control" name="effcdate" id="effcdate" value="{{ form.effcdate.value|date:'Y-m-d'|default_if_none:'' }}" readonly>
+                    {% else %}
+                    <input type="date" class="form-control" name="effcdate" id="effcdate" value="{{ form.effcdate.value|default_if_none:'' }}" readonly>
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    <table style="width: 100%;">
+						<tr>
+                            <td style="width: 50%;">
+                                <label for="openingtime">평소 근무 시작시간</label>
+                                {% if is_fine %}
+                                <input type="time" class="form-control" name="openingtime" id="openingtime" style="width: 98%;" value="{{ form.openingtime.value|time:'H:i:s'|default_if_none:'' }}" autofocus></td>
+                                {% else %}
+                                <input type="time" class="form-control" name="openingtime" id="openingtime" style="width: 98%;" value="{{ form.openingtime.value|default_if_none:'' }}"></td>
+                                {% endif %}
+                                
+                            <td style="width: 50%;">
+                                <label for="closingtime">평소 근무 종료시간</label>
+                                {% if is_fine %}
+                                <input type="time" class="form-control" name="closingtime" id="closingtime" style="width: 98%;" value="{{ form.closingtime.value|time:'H:i:s'|default_if_none:'' }}"></td>
+                                {% else %}
+                                <input type="time" class="form-control" name="closingtime" id="closingtime" style="width: 98%;" value="{{ form.closingtime.value|default_if_none:'' }}"></td>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="mb-3"><label for="adminmemo">관리자 메모</label>
+                    <textarea style="width: 100%; height: 5rem;" class="form-control" name="adminmemo" id="adminmemo" readonly>{{ form.adminmemo.value|default_if_none:'' }}</textarea>
+                </div>
+
+                <div class="mb-3" style="margin-top: 4%;">
+                    <button type="submit" class="btn btn-success" style="width: 100%;">변경 완료</button>
+                </div>
+            </form>
+        </div>
+        <div class="container col-lg-2"></div>
+    </div>
+</section>
+
+{% endblock %}
+

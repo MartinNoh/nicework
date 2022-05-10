@@ -1,0 +1,49 @@
+<!-- ======= Header ======= -->
+<header id="header">
+  <div class="container">
+
+    <div class="logo">
+      <h1><a href="/">HR Manager</a></h1>
+      <!-- Uncomment below if you prefer to use an image logo -->
+      <!-- <a href="index.html"><img src="{% static 'assets/img/logo.png" alt="" class="img-fluid"></a>-->
+    </div>
+
+    <nav id="navbar" class="navbar justify-content-end">
+      <ul>
+        <!-- <li><a class="nav-link scrollto active" href="#hero">연장근로</a></li> -->
+        <li class="dropdown"><a href="{% url 'commute:regt' 'check' %}"><span>출결 관리</span> <i class="bi bi-chevron-down"></i></a>
+          <ul>
+            <!-- <li class="dropdown"><a href="#"><span>Deep Drop Down</span> <i class="bi bi-chevron-right"></i></a>
+              <ul>
+                <li><a href="#">Deep Drop Down 1</a></li>
+                <li><a href="#">Deep Drop Down 2</a></li>
+              </ul>
+            </li> -->
+            <li><a href="{% url 'commute:regt' 'check' %}">출퇴근 등록</a></li>
+            <li><a href="{% url 'commute:hist' %}">출결, 연장근로 확인</a></li>
+          </ul>
+        </li>
+        <li class="dropdown"><a href="{% url 'bsnlog:regt' %}"><span>일일 업무</span> <i class="bi bi-chevron-down"></i></a>
+          <ul>
+            <li><a href="{% url 'bsnlog:regt' %}">일지 작성</a></li>
+            <li><a href="{% url 'bsnlog:hist' %}">업무 내역 확인</a></li>
+          </ul>
+        </li>
+        <li class="dropdown"><a href="{% url 'leave:regt' %}"><span>휴가 관리</span> <i class="bi bi-chevron-down"></i></a>
+          <ul>
+            <li><a href="{% url 'leave:regt' %}">휴가 신청</a></li>
+            <li><a href="{% url 'leave:hist' %}">휴가 내역 확인</a></li>
+          </ul>
+        </li>
+        <li><a class="nav-link scrollto" href="{% url 'common:mypage' %}">마이페이지</a></li>
+        {% if not user.is_authenticated %}
+        <li><a class="getstarted scrollto" href="{% url 'common:login' %}">로그인</a></li>
+        {% else %}
+        <li><a class="getstarted scrollto" href="{% url 'common:logout' %}">로그아웃</a></li>
+        {% endif %}
+      </ul>
+      <i class="bi bi-list mobile-nav-toggle"></i>
+    </nav><!-- .navbar -->
+
+  </div>
+</header><!-- End Header -->

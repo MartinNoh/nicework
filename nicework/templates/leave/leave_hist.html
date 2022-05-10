@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load leave_filter %}
+{% load static %}
+
+{% block content %}
+
+<section id="leavehistroy" class="leavehistroy">
+    <div class="container">
+
+        <div class="section-title" data-aos="fade-up" style="margin-top: 6%;">
+            <h2>휴가신청 확인</h2>
+            <p><strong style="color: darkblue;">휴가</strong> 신청했던 내역 확인,<strong style="color: darkblue;">서식</strong> 다운로드을 하실 수 있습니다.</p>
+        </div>
+
+        <div class="container">
+          <div class="row" data-aos="fade-up" data-aos-delay="150" style="margin-top: 2.5rem;">
+            <div class="col-lg-12" style="text-align: center;">
+                <table class="table" style="text-align: center;">
+                    <thead>
+                    <tr class="table-dark">
+                        <th>번호</th>
+                        <th>작성 일자</th>
+                        <th>휴가 사유</th>
+                        <th>시작 일자</th>
+                        <th>종료 일자</th>
+                        <th>휴가 기간</th>
+                        <th>시간 구분</th>
+                        <th>비상 연락처</th>
+                        <th>승인 여부</th>
+                        <th>서식 다운로드</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% if mylist %}
+                    {% for myreg in mylist %}
+                    <tr>
+                        <td>
+                            <!-- 1부터 시작하는 방법 : {{ forloop.counter }} -->
+                            <!-- 번호 = 전체건수 - 시작인덱스 - 현재인덱스 + 1 -->
+                            {{ mylist.paginator.count|sub:mylist.start_index|sub:forloop.counter0|add:1 }}
+                        </td>
+                        <td>{{ myreg.created_at }}</td>
+                        <td>{{ myreg.reason }}</td>
+                        <td>{{ myreg.startdate }}</td>
+                        <td>{{ myreg.enddate }}</td>
+                        <td>{{ myreg.leaveterm }}</td>
+                        <td>{{ myreg.get_leavecat_display }}</td>
+                        <td>{{ myreg.emgnum }}</td>
+
+                        {% if myreg.is_approved %}
+                        <td><span class="glyphicon glyphicon-ok" aria-hidden="true" style="color: #5cb85c;"></span></td>
+                        {% else %}
+                        <td><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: #d9534f;"></span></td>
+                        {% endif %}
+                    
+                        <td>
+                            <form method="post" action="{% url 'commute:leave_history' %}">
+                                {% csrf_token %}
+                                <input type="hidden" id="created_at" name="created_at" value="{{ myreg.created_at }}"/>
+                                <input type="hidden" id="reason" name="reason" value="{{ myreg.reason }}"/>
+                                <input type="hidden" id="startdate" name="startdate" value="{{ myreg.startdate }}"/>
+                                <input type="hidden" id="enddate" name="enddate" value="{{ myreg.enddate }}"/>
+                                <input type="hidden" id="leaveterm" name="leaveterm" value="{{ myreg.leaveterm }}"/>
+                                <input type="hidden" id="leavecat" name="leavecat" value="{{ myreg.get_leavecat_display }}"/>
+                                <button type="submit" class="btn btn-light">다운로드</button>
+                            </form>
+                        </td>
+                        
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="10">질문이 없습니다.</td>
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+
+                <input type="hidden" value="{{ is_download }}" id="is_download">
+                <input type="hidden" value="{{ source_html }}" id="source-html">
+                
+                <!-- 페이징처리 시작 -->
+                <ul class="pagination justify-content-center">
+                    <!-- 이전페이지 -->
+                    {% if mylist.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ mylist.previous_page_number }}">이전</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
+                    </li>
+                    {% endif %}
+                    <!-- 페이지리스트 -->
+                    {% for page_number in mylist.paginator.page_range %}
+                    {% if page_number >= mylist.number|add:-5 and page_number <= mylist.number|add:5 %}
+                    {% if page_number == mylist.number %}
+                    <li class="page-item active" aria-current="page">
+                        <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+                    </li>
+                    {% endif %}
+                    {% endif %}
+                    {% endfor %}
+                    <!-- 다음페이지 -->
+                    {% if mylist.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ mylist.next_page_number }}">다음</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <!-- 페이징처리 끝 -->
+
+            </div>
+          </div>
+        </div>
+    </div>
+</section><!-- End About Us Section -->
+<input type="hidden" id="realname" name="realname" value=""/>
+<input type="hidden" id="source-html" name="source-html" value=""/>
+
+<script>
+    window.onload = function() {
+        if(document.getElementById("is_download").value == "True"){
+            alert("다운로드한 서식을 출력하여, 내용 확인 및 서명 후 '노동경 주임'에게 확인 바랍니다.")
+            htmlToFile();
+            document.getElementById("is_download").value == "False";
+        }
+    };
+
+	function htmlToFile() {
+		var sourceHTML = document.getElementById("source-html").value;
+		var source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+		var fileDownload = document.createElement("a");
+		document.body.appendChild(fileDownload);
+		fileDownload.href = source;
+		fileDownload.download = '(주)광주인공지능센터_휴가신청서.' + 'hwp';
+		fileDownload.click();
+		document.body.removeChild(fileDownload);
+	}
+</script>
+{% endblock %}
