@@ -11,6 +11,7 @@ then
     echo "PostgreSQL started"
 fi
 
-python manage.py collectstatic --settings=config.settings.prod
+python manage.py migrate
+python manage.py collectstatic
 
 exec "$@"

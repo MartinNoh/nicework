@@ -11,7 +11,7 @@ then
     echo "PostgreSQL started"
 fi
 
-python manage.py flush --no-input --settings=config.settings.local
-python manage.py migrate --settings=config.settings.local
+python manage.py flush --no-input
+python manage.py migrate
 
 exec "$@" 
