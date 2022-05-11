@@ -1,8 +1,8 @@
 from django import forms
-from .models import Leave
+from .models import LevHistory
 
 
-class LeaveForm(forms.ModelForm):
+class LevHistoryForm(forms.ModelForm):
     class Meta:
-        model = Leave
+        model = LevHistory
         fields = ['reason', 'startdate', 'enddate', 'leavecat', 'starttime', 'endtime', 'emgnum']

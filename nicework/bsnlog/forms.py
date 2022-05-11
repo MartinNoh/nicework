@@ -1,8 +1,8 @@
 from django import forms
-from .models import BusinessLog
+from .models import BslHistory
 
 
-class BusinessLogForm(forms.ModelForm):
+class BslHistoryForm(forms.ModelForm):
     class Meta:
-        model = BusinessLog
+        model = BslHistory
         fields = ['contents']

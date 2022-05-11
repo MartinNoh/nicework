@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import Commute
+from .models import CmtHistory
 
 # Register your models here.
 
-admin.site.register(Commute)
+admin.site.register(CmtHistory)

@@ -5,7 +5,7 @@ import datetime
 # Create your models here.
 
 
-class Annleave(models.Model): # 발생한 연차
+class Annual(models.Model): # 발생한 연차
     employee = models.ForeignKey(MyUser, on_delete=models.CASCADE) # 로그인한 계정
     reason = models.TextField(max_length=500)
     days = models.FloatField(default=1)
@@ -16,7 +16,7 @@ class Annleave(models.Model): # 발생한 연차
         return "{0} : {1}일, 사유 :{2}".format(self.employee.realname, self.days, self.reason)
 
 
-class Rwdleave(models.Model): # 발생한 포상휴가
+class Reward(models.Model): # 발생한 포상휴가
     employee = models.ForeignKey(MyUser, on_delete=models.CASCADE) # 로그인한 계정
     reason = models.TextField(max_length=500)
     days = models.FloatField(default=1)
@@ -28,35 +28,7 @@ class Rwdleave(models.Model): # 발생한 포상휴가
         return "{0} : {1}일, 사유 :{2}".format(self.employee.realname, self.days, self.reason)
 
 
-class LeavePaid(models.Model): # 비용지급으로 대체된 휴가
-    employee = models.ForeignKey(MyUser, on_delete=models.CASCADE) # 로그인한 계정
-    reason = models.TextField(max_length=500)
-    days = models.FloatField(default=1)
-    cost = models.IntegerField(default=0)
-    granter = models.CharField(max_length=10)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return "{0} : {1}일, 사유 :{2}".format(self.employee.realname, self.days, self.reason)
-
-
-class UserLeave(models.Model): # 사용자 남은 휴가
-    employee = models.ForeignKey(MyUser, on_delete=models.CASCADE) # 로그인한 계정
-    acm_overtime = models.FloatField(default=0) # 총 연장근로시간
-    acm_annleave = models.FloatField(default=0) # 총 연차
-    acm_rwdleave = models.FloatField(default=0) # 총 포상
-    used = models.FloatField(default=0) # 사용한 휴가일수
-    paid = models.FloatField(default=0) # 비용지급된 휴가일수
-    remained = models.FloatField(default=0) # 잔여 휴가일수
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return "{0} : 잔여 {1}일".format(self.employee.realname, self.leftleave)
-
-
-class Leave(models.Model): # 신청된 휴가
+class LevHistory(models.Model): # 신청된 휴가
     employee = models.ForeignKey(MyUser, on_delete=models.CASCADE) # 로그인한 계정
     reason = models.TextField(max_length=1000) # 휴가 사유
     startdate = models. DateField() # 휴가 시작일시

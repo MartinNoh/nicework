@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from common.models import MyUser
-from ..forms import BusinessLogForm
-from ..models import BusinessLog
+from ..forms import BslHistoryForm
+from ..models import BslHistory
 from django.utils import timezone
 import datetime
 
@@ -13,10 +13,10 @@ def registration(request):
     myuser = get_object_or_404(MyUser, email=request.user.email)
     today_start = datetime.datetime.combine(datetime.date.today(), datetime.time(0, 0, 0))
     today_end = datetime.datetime.combine(datetime.date.today(), datetime.time(23, 59 ,59))
-    mylist = BusinessLog.objects.filter(employee=myuser, created_at__gte=today_start, created_at__lte=today_end).order_by('-created_at')
+    mylist = BslHistory.objects.filter(employee=myuser, created_at__gte=today_start, created_at__lte=today_end).order_by('-created_at')
 
     if request.method == "POST": # 양식 작성하여 POST
-        form = BusinessLogForm(request.POST)
+        form = BslHistoryForm(request.POST)
         if form.is_valid():
             contents = form.cleaned_data.get('contents')
             if mylist: # 오늘 일지 있다. -> contents, updated_at 수정
@@ -24,10 +24,10 @@ def registration(request):
                 mylist[0].updated_at = timezone.now()
                 mylist[0].save()
             else: # 오늘 일지 없다. -> 생성
-                BusinessLog.objects.create(employee=myuser, contents=contents, updated_at=timezone.now())
+                BslHistory.objects.create(employee=myuser, contents=contents, updated_at=timezone.now())
             return redirect('bsnlog:regt')
     else: # GET 페이지 요청
-        form = BusinessLogForm()
+        form = BslHistoryForm()
     
     context = {
         'form': form, 

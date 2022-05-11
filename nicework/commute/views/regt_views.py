@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from common.models import MyUser
-from ..models import Commute
-from leave.models import Leave
+from ..models import CmtHistory
+from leave.models import LevHistory
 from django.utils import timezone
 import datetime
 import math
@@ -25,8 +25,8 @@ def registration(request, check_result):
     today_start = datetime.datetime.combine(today, datetime.time(0, 0, 0))
     today_end = datetime.datetime.combine(today, datetime.time(23, 59, 59))
     myuser = get_object_or_404(MyUser, email=request.user.email)
-    recent_list = Commute.objects.filter(employee=myuser, startdatetime__lte=today_start).order_by('-startdatetime')
-    today_list = Commute.objects.filter(employee=myuser, startdatetime__gte=today_start, startdatetime__lte=today_end).order_by('startdatetime')
+    recent_list = CmtHistory.objects.filter(employee=myuser, startdatetime__lte=today_start).order_by('-startdatetime')
+    today_list = CmtHistory.objects.filter(employee=myuser, startdatetime__gte=today_start, startdatetime__lte=today_end).order_by('startdatetime')
 
     # 출퇴근 페이지 구분
     if recent_list and len(recent_list) > 0 and recent_list[0].enddatetime is None: # CASE 3
@@ -43,7 +43,7 @@ def registration(request, check_result):
     """
     # 금주 남은 근로시간, 연장근로시간
     today_week = datetime.datetime.now().isocalendar()[1]
-    week_list = Commute.objects.filter(employee=myuser, weeknum=today_week).order_by('-startdatetime')
+    week_list = CmtHistory.objects.filter(employee=myuser, weeknum=today_week).order_by('-startdatetime')
     total_worktime = 0
     total_overtime = 0
     if week_list:
@@ -62,7 +62,7 @@ def registration(request, check_result):
     # 휴가, 공휴일, 주말, 평일 구분을 적용한 시업, 종업 시간
     holiday_list = pytimekr.holidays(datetime.datetime.now().year)
     today_weekday = today.weekday()
-    leave_with_today_list = Leave.objects.filter(startdate__lte=today, enddate__gte=today, is_approved=True).order_by('-startdate')
+    leave_with_today_list = LevHistory.objects.filter(startdate__lte=today, enddate__gte=today, is_approved=True).order_by('-startdate')
     weekday_dict = {"0":"월요일", "1":"화요일", "2":"수요일", "3":"목요일", "4":"금요일", "5":"토요일", "6":"일요일"}
     todaycat_dict = {"AL":"연차", "MO":"오전 반차", "AO":"오후 반차", "CV":"경조 휴가", "OL":"공가", "EL":"조퇴", "AB":"결근", "SL":"병가"
         , "HD":"공휴일", "WE":"주말", "WD":"평일"}
@@ -96,12 +96,12 @@ def registration(request, check_result):
 
     # 출근 버튼 클릭
     if check_result == "start":
-        Commute.objects.create(employee=myuser, weeknum=today_week, todaycat=todaycat, openingtime=modified_openingtime, closingtime=modified_closingtime, startdatetime=timezone.now())
+        CmtHistory.objects.create(employee=myuser, weeknum=today_week, todaycat=todaycat, openingtime=modified_openingtime, closingtime=modified_closingtime, startdatetime=timezone.now())
         return redirect('/commute/regt/check/')
 
     # 퇴근 버튼 클릭
     elif check_result == "end":
-        lastwork = Commute.objects.filter(employee=myuser, startdatetime__gte=today_start, startdatetime__lte=today_end).order_by('startdatetime')[0]
+        lastwork = CmtHistory.objects.filter(employee=myuser, startdatetime__gte=today_start, startdatetime__lte=today_end).order_by('startdatetime')[0]
         # 출근한 지 1시간 미만인 인스턴스는 퇴근 버튼 누르면 삭제
         if datetime.datetime.now() < lastwork.startdatetime + datetime.timedelta(hours=1):
             lastwork.delete()

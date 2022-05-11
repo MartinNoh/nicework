@@ -147,7 +147,6 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
-# base.py에서 명시한 찾아야하는 static 폴더를 STATICFILES_DIRS = []로 override하면 collectstatic을 못함.
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 

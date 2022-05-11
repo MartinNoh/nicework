@@ -5,7 +5,7 @@ import datetime
 # Create your models here.
 
 
-class Commute(models.Model): # 출퇴근
+class CmtHistory(models.Model): # 출퇴근
     employee = models.ForeignKey(MyUser, on_delete=models.CASCADE) # 로그인한 계정
 
     weeknum = models.PositiveSmallIntegerField() # 오늘 몇 주차

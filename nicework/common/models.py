@@ -71,7 +71,8 @@ class MyUser(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     is_mgr = models.BooleanField(default=False)
-    is_sbstt = models.BooleanField(verbose_name='연장근로 대체휴가 처리', default=False)
+    is_sbstt = models.BooleanField(verbose_name='연장근로 대체휴가 변환', default=True)
+    is_over80p = models.BooleanField(verbose_name='출근 1년간 80% 이상', default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

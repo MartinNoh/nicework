@@ -2,8 +2,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from common.models import MyUser
-from ..models import Leave
-from ..forms import LeaveForm
+from ..models import LevHistory
+from ..forms import LevHistoryForm
 import datetime
 
 
@@ -29,15 +29,15 @@ def registration(request):
 
 
     if request.method == "POST":
-        form = LeaveForm(request.POST)
+        form = LevHistoryForm(request.POST)
         # 기존 휴가와 겹치는 내용의 신청은 기각
         startdate = request.POST.get('startdate')
         enddate = request.POST.get('enddate')
         start_date = datetime.datetime(int(startdate.split("-")[0]), int(startdate.split("-")[1]), int(startdate.split("-")[2]))
         end_date = datetime.datetime(int(enddate.split("-")[0]), int(enddate.split("-")[1]), int(enddate.split("-")[2]))
-        total_leave = Leave.objects.filter(employee=myuser)
-        not_ovlap1 = Leave.objects.filter(employee=myuser, startdate__gte=end_date)
-        not_ovlap2 = Leave.objects.filter(employee=myuser, enddate__lte=start_date)
+        total_leave = LevHistory.objects.filter(employee=myuser)
+        not_ovlap1 = LevHistory.objects.filter(employee=myuser, startdate__gte=end_date)
+        not_ovlap2 = LevHistory.objects.filter(employee=myuser, enddate__lte=start_date)
         if len(total_leave) != len(not_ovlap1) + len(not_ovlap2):
             messages.error(request, '휴가 신청 내역에 겹치는 기간이 있습니다.')
             return render(request, 'leave/leave_regt.html', {'form': form})
@@ -50,7 +50,7 @@ def registration(request):
                 leave_reg.save()
                 return redirect('leave:hist')
     else: # GET 페이지 요청
-        form = LeaveForm()
+        form = LevHistoryForm()
         
     context = {'form': form, 'opening_time': str(opening_time), 'closing_time': str(closing_time),
         'mo_endtime': str(mo_endtime), 'ao_starttime': str(ao_starttime), 't_diff': t_diff, 'h_diff': h_diff}

@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from common.models import MyUser
-from ..forms import BusinessLogForm
-from ..models import BusinessLog
+from ..forms import BslHistoryForm
+from ..models import BslHistory
 from django.utils import timezone
 from django.core.paginator import Paginator
 
@@ -12,7 +12,7 @@ from django.core.paginator import Paginator
 def history(request):
     # 로그인 계정으로 등록한 일지 리스트 가져오기
     myuser = get_object_or_404(MyUser, email=request.user.email)
-    mylist = BusinessLog.objects.filter(employee=myuser).order_by('-created_at')
+    mylist = BslHistory.objects.filter(employee=myuser).order_by('-created_at')
 
     # 페이지 당 10개씩 보여주기
     page = request.GET.get('page', '1')
@@ -25,7 +25,7 @@ def history(request):
 
 @login_required(login_url='common:login')
 def update(request, bsnlog_id):
-    businesslog = get_object_or_404(BusinessLog, pk=bsnlog_id)
+    businesslog = get_object_or_404(BslHistory, pk=bsnlog_id)
 
     # 일지 작성자가 로그인한 계정과 다른지 확인
     if request.user != businesslog.employee:
@@ -33,14 +33,14 @@ def update(request, bsnlog_id):
         return redirect('bsnlog:hist')
 
     if request.method == "POST": # 양식 작성하여 POST
-        form = BusinessLogForm(request.POST)
+        form = BslHistoryForm(request.POST)
         if form.is_valid():
             businesslog.contents = form.cleaned_data.get('contents')
             businesslog.updated_at = timezone.now()
             businesslog.save()
             return redirect('bsnlog:hist')
     else: # GET 페이지 요청
-        form = BusinessLogForm()
+        form = BslHistoryForm()
 
     context = {'form': form, 'contents': businesslog.contents}
     return render(request, 'bsnlog/bsnlog_updt.html', context)

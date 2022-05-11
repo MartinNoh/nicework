@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from common.models import MyUser
-from ..models import Leave
+from ..models import LevHistory
 from django.core.paginator import Paginator
 import datetime
 
@@ -11,7 +11,7 @@ import datetime
 def history(request):
     # 로그인 계정으로 등록한 휴가 리스트 가져오기
     myuser = get_object_or_404(MyUser, email=request.user.email)
-    mylist = Leave.objects.filter(employee=myuser).order_by('-created_at')
+    mylist = LevHistory.objects.filter(employee=myuser).order_by('-created_at')
     
     # 페이지 당 10개씩 보여주기
     page = request.GET.get('page', '1')

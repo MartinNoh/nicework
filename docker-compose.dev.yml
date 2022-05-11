@@ -16,6 +16,8 @@ services:
     image: postgres:13.0-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
     environment:
       - POSTGRES_USER=donggyeong
       - POSTGRES_PASSWORD=shehdrud12#

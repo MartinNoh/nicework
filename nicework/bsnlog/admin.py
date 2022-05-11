@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import BusinessLog
+from .models import BslHistory
 
 
-admin.site.register(BusinessLog)
+admin.site.register(BslHistory)

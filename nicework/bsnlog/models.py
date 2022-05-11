@@ -3,7 +3,7 @@ from common.models import MyUser
 import datetime
 
 
-class BusinessLog(models.Model):
+class BslHistory(models.Model):
     employee = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     contents = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
