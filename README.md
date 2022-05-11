@@ -1,6 +1,6 @@
 env : python3.6, docker20.10.7, docker-compose1.29.2
 
-------------------------------------------------------------
+--------------------------------------------------------------------------
 
 container up
 ```
@@ -19,6 +19,9 @@ container logs
 $ docker-compose -f docker-compose.prod.yml logs -f
 ```
 
-------------------------------------------------------------
+docker-compose.yml과 init-letsencrypt.sh 파일은 ssl 인증서 발급을 위한 것.
+docker-compose.dev.yml은 django, postgresql 테스트 용도.
+
+--------------------------------------------------------------------------
 
 web logs : /home/ubuntu/code/web_nicework/nicework/logs
