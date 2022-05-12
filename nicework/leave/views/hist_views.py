@@ -30,6 +30,51 @@ def history(request):
     return render(request, 'leave/leave_hist.html', context)
 
 
+@login_required(login_url='common:login')
+def waiting(request):
+    # 로그인 계정으로 등록한 휴가 리스트 가져오기
+    myuser = get_object_or_404(MyUser, email=request.user.email)
+    mylist = LevHistory.objects.filter(employee=myuser).order_by('-created_at')
+    
+    # 페이지 당 10개씩 보여주기
+    page = request.GET.get('page', '1')
+    paginator = Paginator(mylist, 10)
+    page_obj = paginator.get_page(page)
+
+    # 한글 파일 다운로드 버튼 클릭
+    if request.method == "POST":
+        is_download = True
+        r = get_leave_hwp(request.POST, myuser)
+    else:
+        is_download = False
+        r = ''
+
+    context = {'mylist': page_obj, 'source_html': r, 'is_download': is_download}
+    return render(request, 'leave/leave_hist.html', context)
+
+
+@login_required(login_url='common:login')
+def totalhistory(request):
+    # 로그인 계정으로 등록한 휴가 리스트 가져오기
+    myuser = get_object_or_404(MyUser, email=request.user.email)
+    mylist = LevHistory.objects.filter(employee=myuser).order_by('-created_at')
+    
+    # 페이지 당 10개씩 보여주기
+    page = request.GET.get('page', '1')
+    paginator = Paginator(mylist, 10)
+    page_obj = paginator.get_page(page)
+
+    # 한글 파일 다운로드 버튼 클릭
+    if request.method == "POST":
+        is_download = True
+        r = get_leave_hwp(request.POST, myuser)
+    else:
+        is_download = False
+        r = ''
+
+    context = {'mylist': page_obj, 'source_html': r, 'is_download': is_download}
+    return render(request, 'leave/leave_hist.html', context)
+
 
 def get_leave_hwp(data, myuser):
     opening_time = myuser.openingtime

@@ -11,7 +11,7 @@
     <nav id="navbar" class="navbar justify-content-end">
       <ul>
         <!-- <li><a class="nav-link scrollto active" href="#hero">연장근로</a></li> -->
-        <li class="dropdown"><a href="{% url 'commute:regt' 'check' %}"><span>출결 관리</span> <i class="bi bi-chevron-down"></i></a>
+        <li class="dropdown"><a href="{% url 'commute:regt' 'check' %}"><span>출퇴근</span> <i class="bi bi-chevron-down"></i></a>
           <ul>
             <!-- <li class="dropdown"><a href="#"><span>Deep Drop Down</span> <i class="bi bi-chevron-right"></i></a>
               <ul>
@@ -19,20 +19,37 @@
                 <li><a href="#">Deep Drop Down 2</a></li>
               </ul>
             </li> -->
-            <li><a href="{% url 'commute:regt' 'check' %}">출퇴근 등록</a></li>
-            <li><a href="{% url 'commute:hist' %}">출결, 연장근로 확인</a></li>
+            {% if not user.is_mgr %}
+            <li><a href="{% url 'commute:regt' 'check' %}">출퇴근 시간 등록</a></li>
+            <li><a href="{% url 'commute:hist' %}">출퇴근 내역 확인</a></li>
+            {% else %}
+            <li><a href="{% url 'commute:situ' %}">팀원 출근 현황 확인</a></li>
+            <li><a href="{% url 'commute:toth' %}">팀원 출근 내역 확인</a></li>
+            {% endif %}
           </ul>
         </li>
         <li class="dropdown"><a href="{% url 'bsnlog:regt' %}"><span>일일 업무</span> <i class="bi bi-chevron-down"></i></a>
           <ul>
-            <li><a href="{% url 'bsnlog:regt' %}">일지 작성</a></li>
-            <li><a href="{% url 'bsnlog:hist' %}">업무 내역 확인</a></li>
+            {% if not user.is_mgr %}
+            <li><a href="{% url 'bsnlog:regt' %}">일일 업무 기록</a></li>
+            <li><a href="{% url 'bsnlog:situ' %}">일일 팀 업무 확인</a></li>
+            <li><a href="{% url 'bsnlog:hist' %}">나의 업무 내역 관리</a></li>
+            {% else %}
+            <li><a href="{% url 'bsnlog:regt' %}">일일 업무 기록</a></li>
+            <li><a href="{% url 'bsnlog:situ' %}">일일 팀 업무 확인</a></li>
+            <li><a href="{% url 'bsnlog:toth' %}">전체 업무내역 관리</a></li>
+            {% endif %}
           </ul>
         </li>
         <li class="dropdown"><a href="{% url 'leave:regt' %}"><span>휴가 관리</span> <i class="bi bi-chevron-down"></i></a>
           <ul>
+            {% if not user.is_mgr %}
             <li><a href="{% url 'leave:regt' %}">휴가 신청</a></li>
             <li><a href="{% url 'leave:hist' %}">휴가 내역 확인</a></li>
+            {% else %}
+            <li><a href="{% url 'leave:wait' %}">휴가 결재대기 관리</a></li>
+            <li><a href="{% url 'leave:toth' %}">전체 휴가내역 확인</a></li>
+            {% endif %}
           </ul>
         </li>
         <li><a class="nav-link scrollto" href="{% url 'common:mypage' %}">마이페이지</a></li>

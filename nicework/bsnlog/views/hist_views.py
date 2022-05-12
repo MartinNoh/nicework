@@ -44,3 +44,18 @@ def update(request, bsnlog_id):
 
     context = {'form': form, 'contents': businesslog.contents}
     return render(request, 'bsnlog/bsnlog_updt.html', context)
+
+
+@login_required(login_url='common:login')
+def totalhistory(request):
+    # 로그인 계정으로 등록한 일지 리스트 가져오기
+    myuser = get_object_or_404(MyUser, email=request.user.email)
+    mylist = BslHistory.objects.filter(employee=myuser).order_by('-created_at')
+
+    # 페이지 당 10개씩 보여주기
+    page = request.GET.get('page', '1')
+    paginator = Paginator(mylist, 10)    
+    page_obj = paginator.get_page(page)
+
+    context = {'mylist': page_obj}
+    return render(request, 'bsnlog/bsnlog_hist.html', context)
