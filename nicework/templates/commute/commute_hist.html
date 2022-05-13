@@ -18,14 +18,14 @@
                 <table class="table" style="text-align: center;">
                     <thead>
                     <tr class="table-dark">
-                        <th>번호</th>
-                        <th>출근 요일</th>
-                        <th>예정 시업</th>
-                        <th>출근 시간</th>
-                        <th>퇴근 시간</th>
-                        <th>근로 시간</th>
-                        <th>휴게 시간</th>
-                        <th>오버 타임</th>
+                        <td>번호</td>
+                        <td>예정 시업</td>
+                        <td>출근 시간</td>
+                        <td>퇴근 시간</td>
+                        <td>휴일 여부</td>
+                        <td>근로 시간</td>
+                        <td>휴게 시간</td>
+                        <td>오버 타임</td>
                     </tr>
                     </thead>
                     <tbody>
@@ -37,10 +37,10 @@
                             <!-- 번호 = 전체건수 - 시작인덱스 - 현재인덱스 + 1 -->
                             {{ mylist.paginator.count|sub:mylist.start_index|sub:forloop.counter0|add:1 }}
                         </td>
-                        <td>{{ myreg.thisweek }}</td>
                         <td>{{ myreg.openinghours }}</td>
-                        <td>{{ myreg.starttime }}</td>
-                        <td>{{ myreg.endtime }}</td>
+                        <td>{{ myreg.startdatetime }}</td>
+                        <td>{{ myreg.enddatetime }}</td>
+                        <td>{{ myreg.todaycat }}</td>
                         <td>{{ myreg.workinghours }}</td>
                         <td>{{ myreg.breaktime }}</td>
                         <td>{{ myreg.overtime }}</td>
@@ -48,7 +48,7 @@
                     {% endfor %}
                     {% else %}
                     <tr>
-                        <td colspan="8">질문이 없습니다.</td>
+                        <td colspan="8">내용이 없습니다.</td>
                     </tr>
                     {% endif %}
                     </tbody>

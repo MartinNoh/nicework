@@ -396,7 +396,7 @@ h1, h2, h3, h4, h5, h6 {
 section {
   min-height: 100vh;
   padding-top: 0px;
-  padding-bottom: 20vh;
+  padding-bottom: 10vh;
   overflow: hidden;
 }
 

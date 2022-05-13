@@ -62,7 +62,7 @@ def registration(request, check_result):
     # 휴가, 공휴일, 주말, 평일 구분을 적용한 시업, 종업 시간
     holiday_list = pytimekr.holidays(datetime.datetime.now().year)
     today_weekday = today.weekday()
-    leave_with_today_list = LevHistory.objects.filter(startdate__lte=today, enddate__gte=today, is_approved=True).order_by('-startdate')
+    leave_with_today_list = LevHistory.objects.filter(employee=myuser, startdate__lte=today, enddate__gte=today, is_approved=True).order_by('-startdate')
     weekday_dict = {"0":"월요일", "1":"화요일", "2":"수요일", "3":"목요일", "4":"금요일", "5":"토요일", "6":"일요일"}
     todaycat_dict = {"AL":"연차", "MO":"오전 반차", "AO":"오후 반차", "CV":"경조 휴가", "OL":"공가", "EL":"조퇴", "AB":"결근", "SL":"병가"
         , "HD":"공휴일", "WE":"주말", "WD":"평일"}
