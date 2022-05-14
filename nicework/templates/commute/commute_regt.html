@@ -51,7 +51,7 @@
           </tr>
         </table>
 
-        <br/><br/>
+        <br/>
         <table style="width: 100%; margin-top: 1.6rem; margin-left: 1.5rem;">
           <tr>
             <td style="width: 10%;"></td>
@@ -59,7 +59,7 @@
               <ul>
                 <li><i class="ri-check-double-line"></i>오늘은 {{ today }} ({{ today_week }}주차) {{ today_weekday }}입니다.</li>
                 <li><i class="ri-check-double-line"></i>이번 주 잔여 근무시간은 {{ remain_worktime }}시간, 잔여 연장근로시간은 {{ remain_overtime }}시간입니다.</li>
-                <li><i class="ri-check-double-line"></i><strong style="color: darkblue">{{ todaycat }}</strong> 계산식이 적용된 오늘 근무시간은 <strong style="color: darkblue">{{ modified_openingtime }} ~ {{ modified_closingtime }}</strong>입니다.</li>
+                <li><i class="ri-check-double-line"></i><strong style="color: darkblue">{{ todaycat }}</strong> 계산식이 적용된 오늘 근무시간은 <strong style="color: darkblue">{{ modified_openingtime|default_if_none:'없음' }} ~ {{ modified_closingtime|default_if_none:'없음' }}</strong>입니다.</li>
                 <li><i class="ri-check-double-line"></i>(<u><a href="{% url 'common:mypage' %}">마이페이지</a></u>에 설정된 평소 근무시간은 {{ openingtime }} ~ {{ closingtime }}입니다.)</li>
               </ul>
             </td>
@@ -84,24 +84,26 @@
   </div>
 </section><!-- End About Us Section -->
 
+{% endblock %}
 
+
+{% block script %}
 <script>
-    const clock = document.querySelector('.h1-clock');
+  const clock = document.querySelector('.h1-clock');
 
-    function getTime(){
-        const time = new Date();
-        const hour = time.getHours();
-        const minutes = time.getMinutes();
-        const seconds = time.getSeconds();
-        //clock.innerHTML = hour +":" + minutes + ":"+seconds;
-        clock.innerHTML = `${hour<10 ? `0${hour}`:hour}:${minutes<10 ? `0${minutes}`:minutes}:${seconds<10 ? `0${seconds}`:seconds}`
-    }
+  function getTime(){
+      const time = new Date();
+      const hour = time.getHours();
+      const minutes = time.getMinutes();
+      const seconds = time.getSeconds();
+      //clock.innerHTML = hour +":" + minutes + ":"+seconds;
+      clock.innerHTML = `${hour<10 ? `0${hour}`:hour}:${minutes<10 ? `0${minutes}`:minutes}:${seconds<10 ? `0${seconds}`:seconds}`
+  }
 
-    function init(){
-        setInterval(getTime, 1000);
-    }
+  function init(){
+      setInterval(getTime, 1000);
+  }
 
-    init();
+  init();
 </script>
-
 {% endblock %}

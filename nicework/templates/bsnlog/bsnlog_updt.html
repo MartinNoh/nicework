@@ -37,6 +37,9 @@
           </div>
           <button type="submit" class="btn btn-primary" style="width: 100%;">수정 완료</button></td>
         </form>
+        <div style="text-align: center; margin-top: 2%;">
+          <a href="javascript:void(0)" class="delete" data-uri="{% url 'bsnlog:delt' bsnlog_id  %}" style="color: red; text-decoration: none;">삭제</a>
+        </div>
       </div>
 
       <div class="col-lg-3"></div>
@@ -54,4 +57,18 @@
   </div>
 </section><!-- End About Us Section -->
 
+{% endblock %}
+
+
+{% block script %}
+<script type='text/javascript'>
+const delete_elements = document.getElementsByClassName("delete");
+Array.from(delete_elements).forEach(function(element) {
+    element.addEventListener('click', function() {
+        if(confirm("정말로 삭제하시겠습니까?")) {
+            location.href = this.dataset.uri;
+        };
+    });
+});
+</script>
 {% endblock %}

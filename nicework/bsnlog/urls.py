@@ -10,5 +10,6 @@ urlpatterns = [
     
     path('hist/', hist_views.history, name='hist'),
     path('hist/<int:bsnlog_id>/', hist_views.update, name='updt'),
+    path('delt/<int:bsnlog_id>/', hist_views.delete, name='delt'),
     path('toth/', hist_views.totalhistory, name='toth'),
 ]

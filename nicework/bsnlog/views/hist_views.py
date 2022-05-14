@@ -42,8 +42,18 @@ def update(request, bsnlog_id):
     else: # GET 페이지 요청
         form = BslHistoryForm()
 
-    context = {'form': form, 'contents': businesslog.contents}
+    context = {'form': form, 'bsnlog_id': businesslog.id, 'contents': businesslog.contents}
     return render(request, 'bsnlog/bsnlog_updt.html', context)
+
+
+@login_required(login_url='common:login')
+def delete(request, bsnlog_id):
+    businesslog = get_object_or_404(BslHistory, pk=bsnlog_id)
+    if request.user != businesslog.employee:
+        messages.error(request, '삭제권한이 없습니다')
+        return redirect('bsnlog:updt', bsnlog_id=businesslog.id)
+    businesslog.delete()
+    return redirect('bsnlog:hist')
 
 
 @login_required(login_url='common:login')

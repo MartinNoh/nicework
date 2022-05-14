@@ -19,6 +19,7 @@
                     <thead>
                     <tr class="table-dark">
                         <td>번호</td>
+                        <td>이름</td>
                         <td>예정 시업</td>
                         <td>출근 시간</td>
                         <td>퇴근 시간</td>
@@ -37,10 +38,11 @@
                             <!-- 번호 = 전체건수 - 시작인덱스 - 현재인덱스 + 1 -->
                             {{ mylist.paginator.count|sub:mylist.start_index|sub:forloop.counter0|add:1 }}
                         </td>
-                        <td>{{ myreg.openinghours }}</td>
+                        <td>{{ myreg.employee.realname }}</td>
+                        <td>{{ myreg.openingtime }}</td>
                         <td>{{ myreg.startdatetime }}</td>
-                        <td>{{ myreg.enddatetime }}</td>
-                        <td>{{ myreg.todaycat }}</td>
+                        <td>{{ myreg.enddatetime|default_if_none:'-' }}</td>
+                        <td>{{ myreg.get_todaycat_display }}</td>
                         <td>{{ myreg.workinghours }}</td>
                         <td>{{ myreg.breaktime }}</td>
                         <td>{{ myreg.overtime }}</td>
