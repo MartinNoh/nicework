@@ -8,8 +8,8 @@
     <div class="container">
 
         <div class="section-title" data-aos="fade-up" style="margin-top: 6%;">
-            <h2>업무내역 확인</h2>
-            <p>작성했던 <strong style="color: blue;">업무내역</strong>을 확인합니다.</p>
+            <h2>전체 업무내역 확인</h2>
+            <p>팀원들이 작성했던 전체 <strong style="color: blue;">업무내역</strong>을 확인합니다.</p>
         </div>
         
         <div class="row" data-aos="fade-up" data-aos-delay="150" style="margin-top: 2.5rem;">
@@ -31,7 +31,8 @@
                     <tr class="table-dark">
                         <td style="width: 10%;">번호</td>
                         <td style="width: 20%;">작성 일자</td>
-                        <td style="width: 70%;">업무 내용</td>
+                        <td style="width: 10%;">작성자</td>
+                        <td style="width: 60%;">업무 내용</td>
                     </tr>
                     </thead>
                     <tbody>
@@ -44,7 +45,8 @@
                             {{ mylist.paginator.count|sub:mylist.start_index|sub:forloop.counter0|add:1 }}
                         </td>
                         <td style="width: 20%;">{{ myreg.created_at }}</td>
-                        <td style="width: 70%;"><a href="{% url 'bsnlog:updt' myreg.id  %}">{{ myreg.contents }}</a></td>
+                        <td style="width: 10%;">{{ myreg.employee.realname }}</td>
+                        <td style="width: 60%;"><a href="{% url 'bsnlog:updt' myreg.id  %}">{{ myreg.contents }}</a></td>
                     </tr>
                     {% endfor %}
                     {% else %}
@@ -96,7 +98,7 @@
                 <!-- 페이징처리 끝 -->
 
                 <!-- 검색 Hidden Form 시작 -->
-                <form id="searchForm" method="get" action="{% url 'bsnlog:hist' %}">
+                <form id="searchForm" method="get" action="{% url 'bsnlog:toth' %}">
                     <input type="hidden" id="kw" name="kw" value="{{ kw|default_if_none:'' }}">
                     <input type="hidden" id="page" name="page" value="{{ page }}">
                 </form>
