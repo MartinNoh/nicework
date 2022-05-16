@@ -7,6 +7,8 @@ app_name = 'common'
 urlpatterns = [
     # base_views.py
     path('', base_views.index, name='index'),
+    path('policy/', base_views.privacy_policy, name='policy'),
+    path('terms/', base_views.terms_of_service, name='terms'),
 
     # accounts_views.py
     path('signup/', accounts_views.signup, name='signup'),

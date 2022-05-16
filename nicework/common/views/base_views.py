@@ -12,11 +12,23 @@ def index(request):
     return render(request, 'common/index.html', context)
 
 
+def privacy_policy(request):
+    context = {}
+    return render(request, 'common/privacy_policy.html', context)
+
+
+def terms_of_service(request):
+    context = {}
+    return render(request, 'common/terms_of_service.html', context)
+
+
 def page_not_found(request, exception):
     return render(request, 'common/404.html', {})
 
+
 def server_error(request, *args, **argv):
     return render(request, 'common/500.html', {})
+
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
