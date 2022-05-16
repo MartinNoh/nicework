@@ -131,32 +131,34 @@ def registration(request, check_result):
     # 퇴근 버튼 클릭
     elif check_result == "end":
         lastwork = CmtHistory.objects.filter(employee=myuser, startdatetime__gte=today_start, startdatetime__lte=today_end).order_by('startdatetime')[0]
+        """
         # 출근한 지 5분 미만인 인스턴스는 퇴근 버튼 누르면 삭제
         if datetime.datetime.now() < lastwork.startdatetime + datetime.timedelta(minutes=5):
             lastwork.delete()
             return redirect('/commute/regt/check/')
         else:
-            # 근무시간, 휴게시간, 연장근로시간 계산
-            lastwork_openingtime = lastwork.openingtime
-            lastwork_starttime = lastwork.startdatetime.time()
-            start_diff = datetime.datetime.combine(today, lastwork_openingtime) - datetime.datetime.combine(today, lastwork_starttime)
-            st_diff = start_diff.days*24 + start_diff.seconds/3600
-            if st_diff >= 0 and st_diff <= 1: # Good Case
-                workinghours = datetime.datetime.combine(today, timezone.now().time()) - datetime.datetime.combine(today, lastwork_openingtime)  
-            else: # Bad Case, Excellent Case
-                workinghours = datetime.datetime.combine(today, timezone.now().time()) - datetime.datetime.combine(today, lastwork_starttime)
-            wk_hours = workinghours.days*24 + workinghours.seconds/3600
-            breaktime = wk_hours // 4 * 0.5
-            overtime = wk_hours - t_diff if wk_hours - t_diff > 0 else 0
+        """
+        # 근무시간, 휴게시간, 연장근로시간 계산
+        lastwork_openingtime = lastwork.openingtime
+        lastwork_starttime = lastwork.startdatetime.time()
+        start_diff = datetime.datetime.combine(today, lastwork_openingtime) - datetime.datetime.combine(today, lastwork_starttime)
+        st_diff = start_diff.days*24 + start_diff.seconds/3600
+        if st_diff >= 0 and st_diff <= 1: # Good Case
+            workinghours = datetime.datetime.combine(today, timezone.now().time()) - datetime.datetime.combine(today, lastwork_openingtime)  
+        else: # Bad Case, Excellent Case
+            workinghours = datetime.datetime.combine(today, timezone.now().time()) - datetime.datetime.combine(today, lastwork_starttime)
+        wk_hours = workinghours.days*24 + workinghours.seconds/3600
+        breaktime = wk_hours // 4 * 0.5
+        overtime = wk_hours - t_diff if wk_hours - t_diff > 0 else 0
 
-            # 퇴근 시간 업데이트
-            lastwork.enddatetime = timezone.now()
-            lastwork.breaktime = round(breaktime, 1)
-            lastwork.overtime = round(overtime, 1)
-            lastwork.workinghours = round(wk_hours, 1)
-            lastwork.save()
+        # 퇴근 시간 업데이트
+        lastwork.enddatetime = timezone.now()
+        lastwork.breaktime = round(breaktime, 1)
+        lastwork.overtime = round(overtime, 1)
+        lastwork.workinghours = round(wk_hours, 1)
+        lastwork.save()
 
-            return redirect('commute:hist')
+        return redirect('commute:hist')
 
 
     context = {'is_getoff': is_getoff, 'today': today, 'today_week': today_week, 'today_weekday': weekday_dict[str(today_weekday)], 'remain_worktime': remain_worktime, 'remain_overtime': remain_overtime,
