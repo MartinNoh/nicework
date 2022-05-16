@@ -2,9 +2,11 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from common.models import MyUser
-from ..models import LevHistory
+from ..models import LevHistory, Reward
+from commute.models import CmtHistory
 from ..forms import LevHistoryForm
 import datetime
+from dateutil.relativedelta import relativedelta
 
 
 @login_required(login_url='common:login')
@@ -27,6 +29,40 @@ def registration(request):
     mo_endtime = mo_endtime.time()
     ao_starttime = ao_starttime.time()
 
+    # 총 누적 연장근로시간
+    commute_history_list = CmtHistory.objects.filter(employee=myuser)
+    sum_overtime = 0
+    for i in commute_history_list:
+        sum_overtime = sum_overtime + i.overtime
+    # 연장근로시간 휴가 대체 여부
+    is_sbstt = myuser.is_sbstt
+    # 총 누적 연차
+    if myuser.is_over80p:
+        sum_annual = 15
+    else:
+        delta = relativedelta(datetime.date.today(), myuser.effcdate)
+        sum_annual = 12 * delta.years + delta.months
+    # 총 누적 포상휴가
+    reward_history_list = Reward.objects.filter(employee=myuser)
+    sum_reward = 0
+    for i in reward_history_list:
+        sum_reward = sum_reward + i.days
+    # 총 누적 휴가
+    if is_sbstt:
+        closingtime = myuser.closingtime
+        openingtime = myuser.openingtime
+        time_diff = datetime.datetime.combine(datetime.date.today(), closingtime) - datetime.datetime.combine(datetime.date.today(), openingtime)
+        t_diff = time_diff.days*24 + time_diff.seconds/3600
+        total_leave = int(sum_overtime/t_diff) + sum_annual + sum_reward
+    else:
+        total_leave = sum_annual + sum_reward
+    # 사용한 휴가
+    used_leave_list = LevHistory.objects.filter(employee=myuser, is_approved=True)
+    sum_used_leave = 0
+    for i in used_leave_list:
+        sum_used_leave = sum_used_leave + i.leaveterm
+    # 잔여 휴가
+    remained = total_leave - sum_used_leave
 
     if request.method == "POST":
         form = LevHistoryForm(request.POST)
@@ -52,7 +88,7 @@ def registration(request):
     else: # GET 페이지 요청
         form = LevHistoryForm()
         
-    context = {'form': form, 'opening_time': str(opening_time), 'closing_time': str(closing_time),
-        'mo_endtime': str(mo_endtime), 'ao_starttime': str(ao_starttime), 't_diff': t_diff, 'h_diff': h_diff}
+    context = {'form': form, 'sum_overtime':sum_overtime, 'is_sbstt':is_sbstt, 'sum_annual':sum_annual, 'sum_reward':sum_reward, 'total_leave':total_leave, 'sum_used_leave':sum_used_leave, 'remained':remained,
+        'opening_time': str(opening_time), 'closing_time': str(closing_time), 'mo_endtime': str(mo_endtime), 'ao_starttime': str(ao_starttime), 't_diff': t_diff, 'h_diff': h_diff}
     
     return render(request, 'leave/leave_regt.html', context)

@@ -4,28 +4,40 @@
 
 {% block content %}
 <!-- ======= About Us Section ======= -->
-<section id="about" class="about">
+<section>
     <div class="container">
 
         <div class="section-title" data-aos="fade-up" style="margin-top: 6%;">
             <h2>전체 출퇴근 내역 확인</h2>
-            <p><strong style="color: darkblue;">전체 출퇴근 내역</strong>을 확인합니다.</p>
+            <p>등록 되었던 <strong style="color: darkblue;">전체 출퇴근 내역</strong>을 확인합니다.</p>
         </div>
 
-        <div class="container">
-          <div class="row" data-aos="fade-up" data-aos-delay="150" style="margin-top: 2.5rem;">
+        <div class="row" data-aos="fade-up" data-aos-delay="150" style="margin-top: 2.5rem;">
+            <div class="col-lg-4">
+                <p style="margin: 14px 0 0 0;">로그인 계정 : <b>{{ email }}</b></p>
+            </div>
+            <div class="col-lg-8 d-flex justify-content-end">
+                <input type="text" id="search_kw" class="form-control" value="{{ kw|default_if_none:'' }}" onkeyup="enterkey();" autofocus style="width: 30%;">
+                <div class="input-group-append">
+                    &nbsp;&nbsp;<button class="btn btn-primary" type="button" id="btn_search">검색</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" data-aos="fade-up" data-aos-delay="150" style="margin-top: 1.5rem;">
             <div class="col-lg-12" style="text-align: center;">
+
                 <table class="table" style="text-align: center;">
                     <thead>
                     <tr class="table-dark">
                         <td>번호</td>
-                        <td>이름</td>
+                        <td>근무자명</td>
+                        <td>근무 구분</td>
                         <td>예정 시업</td>
+                        <td>예정 종업</td>
                         <td>출근 시간</td>
                         <td>퇴근 시간</td>
-                        <td>휴일 여부</td>
                         <td>근로 시간</td>
-                        <td>휴게 시간</td>
                         <td>오버 타임</td>
                     </tr>
                     </thead>
@@ -39,12 +51,12 @@
                             {{ mylist.paginator.count|sub:mylist.start_index|sub:forloop.counter0|add:1 }}
                         </td>
                         <td>{{ myreg.employee.realname }}</td>
+                        <td>{{ myreg.get_todaycat_display }}</td>
                         <td>{{ myreg.openingtime }}</td>
+                        <td>{{ myreg.closingtime }}</td>
                         <td>{{ myreg.startdatetime }}</td>
                         <td>{{ myreg.enddatetime|default_if_none:'-' }}</td>
-                        <td>{{ myreg.get_todaycat_display }}</td>
                         <td>{{ myreg.workinghours }}</td>
-                        <td>{{ myreg.breaktime }}</td>
                         <td>{{ myreg.overtime }}</td>
                     </tr>
                     {% endfor %}
@@ -61,7 +73,8 @@
                     <!-- 이전페이지 -->
                     {% if mylist.has_previous %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ mylist.previous_page_number }}">이전</a>
+                        <!-- Search Form을 사용하지 않을 경우 Pagination : <a class="page-link" href="?page={{ mylist.previous_page_number }}">이전</a> -->
+                        <a class="page-link" data-page="{{ mylist.previous_page_number }}" href="javascript:void(0)">이전</a>
                     </li>
                     {% else %}
                     <li class="page-item disabled">
@@ -73,11 +86,11 @@
                     {% if page_number >= mylist.number|add:-5 and page_number <= mylist.number|add:5 %}
                     {% if page_number == mylist.number %}
                     <li class="page-item active" aria-current="page">
-                        <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+                        <a class="page-link" data-page="{{ page_number }}" href="javascript:void(0)">{{ page_number }}</a>
                     </li>
                     {% else %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+                        <a class="page-link" data-page="{{ page_number }}" href="javascript:void(0)">{{ page_number }}</a>
                     </li>
                     {% endif %}
                     {% endif %}
@@ -85,7 +98,7 @@
                     <!-- 다음페이지 -->
                     {% if mylist.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ mylist.next_page_number }}">다음</a>
+                        <a class="page-link" data-page="{{ mylist.next_page_number }}" href="javascript:void(0)">다음</a>
                     </li>
                     {% else %}
                     <li class="page-item disabled">
@@ -94,11 +107,44 @@
                     {% endif %}
                 </ul>
                 <!-- 페이징처리 끝 -->
+                
+                <!-- 검색 Hidden Form 시작 -->
+                <form id="searchForm" method="get" action="{% url 'commute:toth' %}">
+                    <input type="hidden" id="kw" name="kw" value="{{ kw|default_if_none:'' }}">
+                    <input type="hidden" id="page" name="page" value="{{ page }}">
+                </form>
+                <!-- 검색 Hidden Form 끝-->
 
             </div>
-          </div>
         </div>
     </div>
 </section><!-- End About Us Section -->
 
+{% endblock %}
+
+
+{% block script %}
+<script type='text/javascript'>
+const page_elements = document.getElementsByClassName("page-link");
+Array.from(page_elements).forEach(function(element) {
+    element.addEventListener('click', function() {
+        document.getElementById('page').value = this.dataset.page;
+        document.getElementById('searchForm').submit();
+    });
+});
+const btn_search = document.getElementById("btn_search");
+btn_search.addEventListener('click', function() {
+    document.getElementById('kw').value = document.getElementById('search_kw').value;
+    document.getElementById('page').value = 1;  // 검색버튼을 클릭할 경우 1페이지부터 조회한다.
+    document.getElementById('searchForm').submit();
+});
+</script>
+
+<script type='text/javascript'>
+function enterkey() {
+    if (window.event.keyCode == 13) {
+        document.getElementById('btn_search').click()
+    }
+}
+</script>
 {% endblock %}

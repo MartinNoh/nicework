@@ -5,17 +5,6 @@ import datetime
 # Create your models here.
 
 
-class Annual(models.Model): # 발생한 연차
-    employee = models.ForeignKey(MyUser, on_delete=models.CASCADE) # 로그인한 계정
-    reason = models.TextField(max_length=500)
-    days = models.FloatField(default=1)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return "{0} : {1}일, 사유 :{2}".format(self.employee.realname, self.days, self.reason)
-
-
 class Reward(models.Model): # 발생한 포상휴가
     employee = models.ForeignKey(MyUser, on_delete=models.CASCADE) # 로그인한 계정
     reason = models.TextField(max_length=500)

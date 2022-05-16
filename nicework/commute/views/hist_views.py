@@ -5,6 +5,7 @@ from leave.models import LevHistory
 from ..models import CmtHistory
 from django.core.paginator import Paginator
 import datetime
+from django.db.models import Q
 
 
 @login_required(login_url='common:login')
@@ -13,12 +14,37 @@ def history(request):
     myuser = get_object_or_404(MyUser, email=request.user.email)
     mylist = CmtHistory.objects.filter(employee=myuser).order_by('-startdatetime')
 
+    today_week = datetime.datetime.now().isocalendar()[1]
+    this_week_cmtlist = CmtHistory.objects.filter(employee=myuser, weeknum=today_week).order_by('-startdatetime')
+    sum_workinghours = 0
+    sum_overtime = 0
+    for i in this_week_cmtlist:
+        sum_workinghours = sum_workinghours + i.workinghours
+        sum_overtime = sum_overtime + i.overtime
+
     # 페이지 당 10개씩 보여주기
     page = request.GET.get('page', '1')
+    kw = request.GET.get('kw', '')  # 검색어
+
+    TODAYCAT_CHOICES = (('AL', '연차'), ('MO', '오전반차'), ('AO', '오후반차')
+        , ('CV', '경조휴가'), ('OL', '공가'), ('EL', '조퇴'), ('AB', '결근'), ('SL', '병가')
+        , ('HD', '공휴일'), ('WE', '주말'), ('WD', '평일'))
+    todaycat_reverse = dict((v, k) for k, v in TODAYCAT_CHOICES)
+    
+    if kw:
+        try:
+            mylist = mylist.filter(
+                Q(startdatetime__icontains=kw) |
+                Q(todaycat__icontains=todaycat_reverse[kw.replace(' ', '')])
+            ).distinct()
+        except:
+            mylist = mylist.filter(
+                Q(startdatetime__icontains=kw)
+            ).distinct()
     paginator = Paginator(mylist, 10)
     page_obj = paginator.get_page(page)
 
-    context = {'mylist': page_obj}
+    context = {'myuser':myuser, 'mylist': page_obj, 'page': page, 'kw': kw, 'sum_workinghours':round(sum_workinghours, 1), 'sum_overtime':round(sum_overtime, 1)}
     return render(request, 'commute/commute_hist.html', context)
 
 
@@ -54,8 +80,25 @@ def totalhistory(request):
 
     # 페이지 당 10개씩 보여주기
     page = request.GET.get('page', '1')
+    kw = request.GET.get('kw', '')  # 검색어
+
+    TODAYCAT_CHOICES = (('AL', '연차'), ('MO', '오전반차'), ('AO', '오후반차')
+        , ('CV', '경조휴가'), ('OL', '공가'), ('EL', '조퇴'), ('AB', '결근'), ('SL', '병가')
+        , ('HD', '공휴일'), ('WE', '주말'), ('WD', '평일'))
+    todaycat_reverse = dict((v, k) for k, v in TODAYCAT_CHOICES)
+    
+    if kw:
+        try:
+            mylist = mylist.filter(
+                Q(startdatetime__icontains=kw) |
+                Q(todaycat__icontains=todaycat_reverse[kw.replace(' ', '')])
+            ).distinct()
+        except:
+            mylist = mylist.filter(
+                Q(startdatetime__icontains=kw)
+            ).distinct()
     paginator = Paginator(mylist, 10)
     page_obj = paginator.get_page(page)
 
-    context = {'mylist': page_obj}
+    context = {'email': request.user.email, 'mylist': page_obj, 'page': page, 'kw': kw}
     return render(request, 'commute/commute_toth.html', context)

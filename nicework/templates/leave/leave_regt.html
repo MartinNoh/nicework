@@ -3,12 +3,18 @@
 
 {% block content %}
 
-<section id="leave" class="leave">
+<section>
     <div class="container">
   
         <div class="section-title" data-aos="fade-up" style="margin-top: 6%;">
             <h2>휴가 신청</h2>
             <p><strong style="color: darkblue;">휴가 신청 양식</strong>을 작성해주세요.</p>
+            <p>누적 휴가 {{ total_leave }}일 - 사용 휴가 {{ sum_used_leave }}일 = 잔여 휴가 {{ remained }}일</p>
+            {% if is_sbstt %}
+            <p>(누적 휴가 = 총 연장근로시간 {{ sum_overtime }}시간 + 총 연차 {{ sum_annual }}일 + 총 포상 {{ sum_reward }}일)</p>
+            {% else %}
+            <p>(누적 휴가 = 총 연차 {{ sum_annual }}일 + 총 포상: {{ sum_reward }}일)</p>
+            {% endif %}
         </div>
         
         <div class="row">

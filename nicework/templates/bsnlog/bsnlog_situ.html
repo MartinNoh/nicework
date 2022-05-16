@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section>
+  <div class="container faq">
+    <div class="section-title" data-aos="fade-up" style="margin-top: 6%;">
+        <h2>일일 팀 업무 확인</h2>
+        <p>"<strong style="color: darkblue">오늘 팀원들의 업무 사항</strong>을 확인 해봅니다."</p>
+    </div>
+    {% if mylist %}
+    {% for i in mylist %}
+    <div class="row faq-item d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="100">
+      <div class="col-lg-2">
+        <span class="glyphicon glyphicon-ok" aria-hidden="true" style="color: #5cb85c;"></span>&nbsp;&nbsp;<b style="font-size: 2rem;">{{ i.employee.realname }} : </b>
+      </div>
+      <div class="col-lg-10">
+        <p>{{i.contents}}</p>
+      </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="section-title" data-aos="fade-up" style="margin-top: 6%;">
+      <h4>팀원, 작성 내용 없음.</h4>
+  </div>
+    {% endif %}
+
+  </div>
+</section>
+{% endblock %}
