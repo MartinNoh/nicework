@@ -394,9 +394,9 @@ h1, h2, h3, h4, h5, h6 {
 # Sections General
 --------------------------------------------------------------*/
 section {
-  min-height: 100vh;
+  min-height: 90vh;
   padding-top: 0px;
-  padding-bottom: 20vh;
+  padding-bottom: 10vh;
   overflow: hidden;
 }
 
@@ -469,18 +469,18 @@ section {
 /*--------------------------------------------------------------
 # Commute
 --------------------------------------------------------------*/
-.commute .container ul {
+#commute .container ul {
   list-style: none;
   padding: 0;
 }
-.commute .container ul li {
+#commute .container ul li {
   padding-left: 28px;
   position: relative;
 }
-.commute .container ul li + li {
+#commute .container ul li + li {
   margin-top: 10px;
 }
-.commute .container ul i {
+#commute .container ul i {
   position: absolute;
   left: 0;
   top: 2px;
@@ -488,13 +488,13 @@ section {
   color: #3498db;
   line-height: 1;
 }
-.commute .container .nowTime{
+#commute .container .nowTime{
   font-weight: 1000;
   font-size: 38px;
   font-family: arial;
   vertical-align: bottom;
 }
-.commute .container .nowText{
+#commute .container .nowText{
   font-weight: 380;
   font-size: 30px;
   font-family: arial;
