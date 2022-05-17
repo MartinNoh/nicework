@@ -37,10 +37,11 @@ def history(request):
                 Q(startdatetime__icontains=kw) |
                 Q(todaycat__icontains=todaycat_reverse[kw.replace(' ', '')])
             ).distinct()
-        except:
+        except Exception as e:
             mylist = mylist.filter(
                 Q(startdatetime__icontains=kw)
             ).distinct()
+            print(f"Exceiption occured:\n{e}")
     paginator = Paginator(mylist, 10)
     page_obj = paginator.get_page(page)
 
@@ -93,10 +94,11 @@ def totalhistory(request):
                 Q(startdatetime__icontains=kw) |
                 Q(todaycat__icontains=todaycat_reverse[kw.replace(' ', '')])
             ).distinct()
-        except:
+        except Exceiption as e:
             mylist = mylist.filter(
                 Q(startdatetime__icontains=kw)
             ).distinct()
+            print(f"Exception occrured:\n{e}")
     paginator = Paginator(mylist, 10)
     page_obj = paginator.get_page(page)
 
