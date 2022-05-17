@@ -94,7 +94,7 @@ def totalhistory(request):
                 Q(startdatetime__icontains=kw) |
                 Q(todaycat__icontains=todaycat_reverse[kw.replace(' ', '')])
             ).distinct()
-        except Exceiption as e:
+        except Exception as e:
             mylist = mylist.filter(
                 Q(startdatetime__icontains=kw)
             ).distinct()
