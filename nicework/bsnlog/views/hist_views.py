@@ -17,16 +17,16 @@ def history(request):
 
     # 페이지 당 10개씩 보여주기
     page = request.GET.get('page', '1')
+    dt = request.GET.get('dt', '') # 검색일자
     kw = request.GET.get('kw', '')  # 검색어
-    if kw:
-        mylist = mylist.filter(
-            Q(created_at__icontains=kw) |
-            Q(contents__icontains=kw)
-        ).distinct()
+    if dt != '':
+        mylist = mylist.filter(contents__icontains=kw, created_at__gte=dt).distinct()
+    else:
+        mylist = mylist.filter(contents__icontains=kw).distinct()
     paginator = Paginator(mylist, 10)    
     page_obj = paginator.get_page(page)
 
-    context = {'myuser': myuser, 'mylist': page_obj, 'page': page, 'kw': kw}
+    context = {'myuser': myuser, 'mylist': page_obj, 'page': page, 'kw': kw, 'dt':dt}
     return render(request, 'bsnlog/bsnlog_hist.html', context)
 
 
@@ -88,15 +88,23 @@ def totalhistory(request):
 
     # 페이지 당 10개씩 보여주기
     page = request.GET.get('page', '1')
+    dt = request.GET.get('dt', '') # 검색일자
     kw = request.GET.get('kw', '')  # 검색어
-    if kw:
-        mylist = mylist.filter(
-            Q(employee__realname__icontains=kw) |
-            Q(created_at__icontains=kw) |
-            Q(contents__icontains=kw)
-        ).distinct()
+    if dt != '':
+        mylist = mylist.filter(contents__icontains=kw, created_at__gte=dt).distinct()
+    else:
+        mylist = mylist.filter(contents__icontains=kw).distinct()
     paginator = Paginator(mylist, 10)    
     page_obj = paginator.get_page(page)
 
-    context = {'myuser': myuser, 'mylist': page_obj, 'page': page, 'kw': kw}
+    context = {'myuser': myuser, 'mylist': page_obj, 'page': page, 'kw': kw, 'dt': dt}
     return render(request, 'bsnlog/bsnlog_toth.html', context)
+
+
+def validate_date(date_text):
+    try:
+        datetime.datetime.strptime(date_text,"%Y-%m-%d")
+        return True
+    except ValueError:
+        print("Incorrect data format({0}), should be YYYY-MM-DD".format(date_text))
+        return False

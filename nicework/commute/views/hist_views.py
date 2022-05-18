@@ -25,28 +25,22 @@ def history(request):
 
     # 페이지 당 10개씩 보여주기
     page = request.GET.get('page', '1')
-    kw = request.GET.get('kw', '')  # 검색어
+    dt = request.GET.get('dt', '') # 검색일자
+    ct = request.GET.get('ct', '') # 검색구분
+    kw = request.GET.get('kw', 0)  # 오버타임
 
-    TODAYCAT_CHOICES = (('AL', '연차'), ('MO', '오전반차'), ('AO', '오후반차')
-        , ('CV', '경조휴가'), ('OL', '공가'), ('EL', '조퇴'), ('AB', '결근'), ('SL', '병가')
-        , ('HD', '공휴일'), ('WE', '주말'), ('WD', '평일'))
-    todaycat_reverse = dict((v, k) for k, v in TODAYCAT_CHOICES)
-    
-    if kw:
-        try:
-            mylist = mylist.filter(
-                Q(startdatetime__icontains=kw) |
-                Q(todaycat__icontains=todaycat_reverse[kw.replace(' ', '')])
-            ).distinct()
-        except Exception as e:
-            mylist = mylist.filter(
-                Q(startdatetime__icontains=kw)
-            ).distinct()
-            print(f"Exceiption occured:\n{e}")
+    if dt != '' and  ct != '':
+        mylist = mylist.filter(overtime__gte=kw, todaycat__icontains=ct, startdatetime__gte=dt).distinct()
+    elif dt == '' and ct != '':
+        mylist = mylist.filter(overtime__gte=kw, todaycat__icontains=ct).distinct()
+    elif dt != '' and ct == '':
+        mylist = mylist.filter(overtime__gte=kw, startdatetime__gte=dt).distinct()
+    else:
+        mylist = mylist.filter(overtime__gte=kw).distinct()
     paginator = Paginator(mylist, 10)
     page_obj = paginator.get_page(page)
 
-    context = {'myuser':myuser, 'mylist': page_obj, 'page': page, 'kw': kw, 'sum_workinghours':round(sum_workinghours, 1), 'sum_overtime':round(sum_overtime, 1)}
+    context = {'myuser':myuser, 'mylist': page_obj, 'page': page, 'kw': kw, 'dt':dt, 'ct': ct, 'sum_workinghours':round(sum_workinghours, 1), 'sum_overtime':round(sum_overtime, 1)}
     return render(request, 'commute/commute_hist.html', context)
 
 
@@ -98,26 +92,20 @@ def totalhistory(request):
 
     # 페이지 당 10개씩 보여주기
     page = request.GET.get('page', '1')
-    kw = request.GET.get('kw', '')  # 검색어
+    dt = request.GET.get('dt', '') # 검색일자
+    ct = request.GET.get('ct', '') # 검색구분
+    kw = request.GET.get('kw', 0)  # 오버타임
 
-    TODAYCAT_CHOICES = (('AL', '연차'), ('MO', '오전반차'), ('AO', '오후반차')
-        , ('CV', '경조휴가'), ('OL', '공가'), ('EL', '조퇴'), ('AB', '결근'), ('SL', '병가')
-        , ('HD', '공휴일'), ('WE', '주말'), ('WD', '평일'))
-    todaycat_reverse = dict((v, k) for k, v in TODAYCAT_CHOICES)
-    
-    if kw:
-        try:
-            mylist = mylist.filter(
-                Q(startdatetime__icontains=kw) |
-                Q(todaycat__icontains=todaycat_reverse[kw.replace(' ', '')])
-            ).distinct()
-        except Exception as e:
-            mylist = mylist.filter(
-                Q(startdatetime__icontains=kw)
-            ).distinct()
-            print(f"Exception occrured:\n{e}")
+    if dt != '' and  ct != '':
+        mylist = mylist.filter(overtime__gte=kw, todaycat__icontains=ct, startdatetime__gte=dt).distinct()
+    elif dt == '' and ct != '':
+        mylist = mylist.filter(overtime__gte=kw, todaycat__icontains=ct).distinct()
+    elif dt != '' and ct == '':
+        mylist = mylist.filter(overtime__gte=kw, startdatetime__gte=dt).distinct()
+    else:
+        mylist = mylist.filter(overtime__gte=kw).distinct()
     paginator = Paginator(mylist, 10)
     page_obj = paginator.get_page(page)
 
-    context = {'myuser':myuser, 'email': request.user.email, 'mylist': page_obj, 'page': page, 'kw': kw}
+    context = {'myuser':myuser, 'email': request.user.email, 'mylist': page_obj, 'page': page, 'kw': kw, 'dt': dt, 'ct': ct}
     return render(request, 'commute/commute_toth.html', context)

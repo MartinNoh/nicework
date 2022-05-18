@@ -18,23 +18,18 @@ def history(request):
     
     # 페이지 당 10개씩 보여주기
     page = request.GET.get('page', '1')
+    dt = request.GET.get('dt', '') # 검색일자
+    ct = request.GET.get('ct', '') # 검색구분
     kw = request.GET.get('kw', '')  # 검색어
-    LEAVECAT_CHOICES = (('AL', '연차'), ('MO', '오전반차'), ('AO', '오후반차')
-        , ('CV', '경조휴가'), ('OL', '공가'), ('EL', '조퇴'), ('AB', '결근'), ('SL', '병가')
-        , ('HD', '공휴일'), ('WE', '주말'), ('WD', '평일'))
-    leavecat_reverse = dict((v, k) for k, v in LEAVECAT_CHOICES)
-    
-    if kw:
-        try:
-            mylist = mylist.filter(
-                Q(reason__icontains=kw) |
-                Q(leavecat__icontains=leavecat_reverse[kw.replace(' ', '')])
-            ).distinct()
-        except Exception as e:
-            mylist = mylist.filter(
-                Q(reason__icontains=kw)
-            ).distinct()
-            print(f"Exceiption occured:\n{e}")
+
+    if dt != '' and  ct != '':
+        mylist = mylist.filter(reason__icontains=kw, leavecat__icontains=ct, startdate__gte=dt).distinct()
+    elif dt == '' and ct != '':
+        mylist = mylist.filter(reason__icontains=kw, leavecat__icontains=ct).distinct()
+    elif dt != '' and ct == '':
+        mylist = mylist.filter(reason__icontains=kw, startdate__gte=dt).distinct()
+    else:
+        mylist = mylist.filter(reason__icontains=kw).distinct()
     paginator = Paginator(mylist, 10)
     page_obj = paginator.get_page(page)
 
@@ -46,7 +41,7 @@ def history(request):
         is_download = False
         r = ''
 
-    context = {'myuser': myuser, 'mylist': page_obj, 'page': page, 'kw': kw, 'source_html': r, 'is_download': is_download}
+    context = {'myuser': myuser, 'mylist': page_obj, 'page': page, 'kw': kw, 'dt':dt, 'ct':ct, 'source_html': r, 'is_download': is_download}
     return render(request, 'leave/leave_hist.html', context)
 
 
@@ -73,27 +68,22 @@ def waiting(request):
     
     # 페이지 당 10개씩 보여주기
     page = request.GET.get('page', '1')
+    dt = request.GET.get('dt', '') # 검색일자
+    ct = request.GET.get('ct', '') # 검색구분
     kw = request.GET.get('kw', '')  # 검색어
-    LEAVECAT_CHOICES = (('AL', '연차'), ('MO', '오전반차'), ('AO', '오후반차')
-        , ('CV', '경조휴가'), ('OL', '공가'), ('EL', '조퇴'), ('AB', '결근'), ('SL', '병가')
-        , ('HD', '공휴일'), ('WE', '주말'), ('WD', '평일'))
-    leavecat_reverse = dict((v, k) for k, v in LEAVECAT_CHOICES)
-    
-    if kw:
-        try:
-            mylist = mylist.filter(
-                Q(reason__icontains=kw) |
-                Q(leavecat__icontains=leavecat_reverse[kw.replace(' ', '')])
-            ).distinct()
-        except Exception as e:
-            mylist = mylist.filter(
-                Q(reason__icontains=kw)
-            ).distinct()
-            print(f"Exceiption occured:\n{e}")
+
+    if dt != '' and  ct != '':
+        mylist = mylist.filter(reason__icontains=kw, leavecat__icontains=ct, startdate__gte=dt).distinct()
+    elif dt == '' and ct != '':
+        mylist = mylist.filter(reason__icontains=kw, leavecat__icontains=ct).distinct()
+    elif dt != '' and ct == '':
+        mylist = mylist.filter(reason__icontains=kw, startdate__gte=dt).distinct()
+    else:
+        mylist = mylist.filter(reason__icontains=kw).distinct()
     paginator = Paginator(mylist, 10)
     page_obj = paginator.get_page(page)
 
-    context = {'myuser': myuser, 'mylist': page_obj, 'page': page, 'kw': kw}
+    context = {'myuser': myuser, 'mylist': page_obj, 'page': page, 'kw': kw, 'dt': dt, 'ct': ct}
     return render(request, 'leave/leave_wait.html', context)
 
 
@@ -155,27 +145,22 @@ def totalhistory(request):
     
     # 페이지 당 10개씩 보여주기
     page = request.GET.get('page', '1')
+    dt = request.GET.get('dt', '') # 검색일자
+    ct = request.GET.get('ct', '') # 검색구분
     kw = request.GET.get('kw', '')  # 검색어
-    LEAVECAT_CHOICES = (('AL', '연차'), ('MO', '오전반차'), ('AO', '오후반차')
-        , ('CV', '경조휴가'), ('OL', '공가'), ('EL', '조퇴'), ('AB', '결근'), ('SL', '병가')
-        , ('HD', '공휴일'), ('WE', '주말'), ('WD', '평일'))
-    leavecat_reverse = dict((v, k) for k, v in LEAVECAT_CHOICES)
-    
-    if kw:
-        try:
-            mylist = mylist.filter(
-                Q(reason__icontains=kw) |
-                Q(leavecat__icontains=leavecat_reverse[kw.replace(' ', '')])
-            ).distinct()
-        except Exception as e:
-            mylist = mylist.filter(
-                Q(reason__icontains=kw)
-            ).distinct()
-            print(f"Exceiption occured:\n{e}")
+
+    if dt != '' and  ct != '':
+        mylist = mylist.filter(reason__icontains=kw, leavecat__icontains=ct, startdate__gte=dt).distinct()
+    elif dt == '' and ct != '':
+        mylist = mylist.filter(reason__icontains=kw, leavecat__icontains=ct).distinct()
+    elif dt != '' and ct == '':
+        mylist = mylist.filter(reason__icontains=kw, startdate__gte=dt).distinct()
+    else:
+        mylist = mylist.filter(reason__icontains=kw).distinct()
     paginator = Paginator(mylist, 10)
     page_obj = paginator.get_page(page)
 
-    context = {'myuser': myuser, 'mylist': page_obj, 'page': page, 'kw': kw}
+    context = {'myuser': myuser, 'mylist': page_obj, 'page': page, 'dt': dt, 'ct': ct, 'kw': kw}
     return render(request, 'leave/leave_toth.html', context)
 
 

@@ -8,18 +8,24 @@
     <div class="container">
 
         <div class="section-title" data-aos="fade-up" style="margin-top: 6%;">
-            <h2>업무내역 확인</h2>
+            <h2>나의 업무내역 관리</h2>
             <p>작성했던 <strong style="color: blue;">나의 업무내역</strong>을 확인합니다.</p>
         </div>
         
         <div class="row" data-aos="fade-up" data-aos-delay="150" style="margin-top: 2.5rem;">
             <div class="col-lg-4">
-                <p style="margin: 14px 0 0 0;">현재 로그인 계정 : <b>{{ myuser.email }}</b></p>
+                <p style="margin: 14px 0 0 0;"></p>
             </div>
             <div class="col-lg-8 d-flex justify-content-end">
-                <input type="text" id="search_kw" class="form-control" value="{{ kw|default_if_none:'' }}" onkeyup="enterkey();" autofocus style="width: 30%;">
+                <p style="padding-top: 0.8rem;"><b>작성 일자</b>&nbsp;&nbsp;</p>
+                <input type="date" id="search_dt" value="{{ dt|default_if_none:'' }}" style="width: 15%; height: 100%;">
+                <p style="padding-top: 0.8rem;">&nbsp;<b>부터, </b>&nbsp;&nbsp;</p>
+
+                <input type="text" id="search_kw" class="form-control" value="{{ kw|default_if_none:'' }}" onkeyup="enterkey();" style="width: 30%; height: 100%;" placeholder="업무 내용을">
+                &nbsp;&nbsp;
+
                 <div class="input-group-append">
-                    &nbsp;&nbsp;<button class="btn btn-primary" type="button" id="btn_search">검색</button>
+                    <button class="btn btn-primary" type="button" id="btn_search" style="height: 100%;" autofocus>검색</button>
                 </div>
             </div>
         </div>
@@ -97,6 +103,7 @@
 
                 <!-- 검색 Hidden Form 시작 -->
                 <form id="searchForm" method="get" action="{% url 'bsnlog:hist' %}">
+                    <input type="hidden" id="dt" name="dt" value="{{ dt|default_if_none:'' }}">
                     <input type="hidden" id="kw" name="kw" value="{{ kw|default_if_none:'' }}">
                     <input type="hidden" id="page" name="page" value="{{ page }}">
                 </form>
@@ -121,6 +128,7 @@ Array.from(page_elements).forEach(function(element) {
 });
 const btn_search = document.getElementById("btn_search");
 btn_search.addEventListener('click', function() {
+    document.getElementById('dt').value = document.getElementById('search_dt').value;
     document.getElementById('kw').value = document.getElementById('search_kw').value;
     document.getElementById('page').value = 1;  // 검색버튼을 클릭할 경우 1페이지부터 조회한다.
     document.getElementById('searchForm').submit();

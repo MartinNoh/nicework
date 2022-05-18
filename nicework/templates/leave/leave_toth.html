@@ -14,12 +14,31 @@
 
         <div class="row" data-aos="fade-up" data-aos-delay="150" style="margin-top: 2.5rem;">
             <div class="col-lg-4">
-                <p style="margin: 14px 0 0 0;">현재 로그인 계정 : <b>{{ myuser.email }}</b></p>
+                <p style="margin: 14px 0 0 0;"></p>
             </div>
             <div class="col-lg-8 d-flex justify-content-end">
-                <input type="text" id="search_kw" class="form-control" value="{{ kw|default_if_none:'' }}" onkeyup="enterkey();" autofocus style="width: 30%;">
+                <p style="padding-top: 0.8rem;"><b>시작 일자</b>&nbsp;&nbsp;</p>
+                <input type="date" id="search_dt" value="{{ dt|default_if_none:'' }}" style="width: 15%; height: 100%;">
+                <p style="padding-top: 0.8rem;">&nbsp;<b>부터, </b>&nbsp;&nbsp;</p>
+
+                <select style="width:15%; height:100%;" id="search_ct">
+                    <option value="">--선택--</option>
+                    <option value="AL">연차</option>
+                    <option value="MO">오전 반차</option>
+                    <option value="AO">오후 반차</option>
+                    <option value="CV">경조 휴가</option>
+                    <option value="OL">공가</option>
+                    <option value="EL">조퇴</option>
+                    <option value="AB">결근</option>
+                    <option value="SL">병가</option>
+                </select>
+                <p style="padding-top: 0.8rem;">&nbsp;<b>의 </b>&nbsp;&nbsp;</p>
+
+                <input type="text" id="search_kw" class="form-control" value="{{ kw|default_if_none:'' }}" onkeyup="enterkey();" style="width: 30%; height: 100%;" placeholder="휴가 사유를">
+                &nbsp;&nbsp;
+
                 <div class="input-group-append">
-                    &nbsp;&nbsp;<button class="btn btn-primary" type="button" id="btn_search">검색</button>
+                    <button class="btn btn-primary" type="button" id="btn_search" style="height: 100%;" autofocus>검색</button>
                 </div>
             </div>
         </div>
@@ -127,6 +146,8 @@
 
                 <!-- 검색 Hidden Form 시작 -->
                 <form id="searchForm" method="get" action="{% url 'leave:toth' %}">
+                    <input type="hidden" id="dt" name="dt" value="{{ dt|default_if_none:'' }}">
+                    <input type="hidden" id="ct" name="ct" value="{{ ct|default_if_none:'' }}">
                     <input type="hidden" id="kw" name="kw" value="{{ kw|default_if_none:'' }}">
                     <input type="hidden" id="page" name="page" value="{{ page }}">
                 </form>
@@ -143,6 +164,17 @@
 
 {% block script %}
 <script type='text/javascript'>
+window.onload = function() {
+    if(document.getElementById("ct").value){
+        const ct = document.getElementById('ct').value
+        document.querySelectorAll("#search_ct option").forEach(opt => {
+            if (opt.value == ct) {
+                opt.selected = true;
+            }
+        });
+    }
+};
+
 const delete_elements = document.getElementsByClassName("delete");
 Array.from(delete_elements).forEach(function(element) {
     element.addEventListener('click', function() {
@@ -164,6 +196,8 @@ Array.from(page_elements).forEach(function(element) {
 });
 const btn_search = document.getElementById("btn_search");
 btn_search.addEventListener('click', function() {
+    document.getElementById('dt').value = document.getElementById('search_dt').value;
+    document.getElementById('ct').value = document.getElementById('search_ct').value;
     document.getElementById('kw').value = document.getElementById('search_kw').value;
     document.getElementById('page').value = 1;  // 검색버튼을 클릭할 경우 1페이지부터 조회한다.
     document.getElementById('searchForm').submit();
