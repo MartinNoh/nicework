@@ -34,8 +34,8 @@
                         <td>{{ forloop.counter }}</td>
                         <td>{{ commuter.employee.realname }}</td>
                         <td>{{ commuter.get_todaycat_display }}</td>
-                        <td>{{ commuter.openingtime }}</td>
-                        <td>{{ commuter.closingtime }}</td>
+                        <td>{{ commuter.openingtime|default_if_none:'-' }}</td>
+                        <td>{{ commuter.closingtime|default_if_none:'-' }}</td>
                         <td>{{ commuter.startdatetime }}</td>
                         <td>{{ commuter.enddatetime|default_if_none:'-' }}</td>
                     </tr>

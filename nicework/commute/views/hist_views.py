@@ -67,7 +67,7 @@ def situation(request):
     leave_dict = {'AL':'연차', 'MO':'오전 반차', 'AO':'오후 반차', 'CV':'경조 휴가', 'OL':'공가', 'EL':'조퇴', 'AB':'결근', 'SL':'병가'}
     noncommuters = []
     for i in noncommute_users:
-        todaycat = '-'
+        todaycat = '평일'
         for j in today_leave_list:
             if str(j.employee_id) == str(i.id):
                 todaycat = leave_dict.get(str(j.leavecat))

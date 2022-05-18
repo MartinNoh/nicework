@@ -50,8 +50,8 @@
                             {{ mylist.paginator.count|sub:mylist.start_index|sub:forloop.counter0|add:1 }}
                         </td>
                         <td>{{ myreg.get_todaycat_display }}</td>
-                        <td>{{ myreg.openingtime }}</td>
-                        <td>{{ myreg.closingtime }}</td>
+                        <td>{{ myreg.openingtime|default_if_none:'-' }}</td>
+                        <td>{{ myreg.closingtime|default_if_none:'-' }}</td>
                         <td>{{ myreg.startdatetime }}</td>
                         <td>{{ myreg.enddatetime|default_if_none:'-' }}</td>
                         <td>{{ myreg.workinghours }}</td>

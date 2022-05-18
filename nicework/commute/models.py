@@ -15,8 +15,8 @@ class CmtHistory(models.Model): # 출퇴근
         , ('HD', '공휴일'), ('WE', '주말'), ('WD', '평일'))
     todaycat = models.CharField(max_length=2, choices=TODAYCAT_CHOICES, default='WD') # 휴일 여부
 
-    openingtime = models.TimeField() # 시업 시간
-    closingtime = models.TimeField() # 종업 시간
+    openingtime = models.TimeField(null=True) # 시업 시간
+    closingtime = models.TimeField(null=True) # 종업 시간
 
     startdatetime = models.DateTimeField() # 출근한 시간
     enddatetime = models.DateTimeField(null=True, blank=True) # 퇴근한 시간

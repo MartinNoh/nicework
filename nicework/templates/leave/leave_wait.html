@@ -26,6 +26,17 @@
 
         <div class="row" data-aos="fade-up" data-aos-delay="150" style="margin-top: 2.5rem;">
             <div class="col-lg-12" style="text-align: center;">
+
+                <!-- message 표시 -->
+                {% if messages %}
+                <div class="alert alert-danger my-3" role="alert">
+                {% for message in messages %}
+                    <strong>{{ message.tags }}</strong>
+                    <ul><li>{{ message.message }}</li></ul>
+                {% endfor %}
+                </div>
+                {% endif %}
+                
                 <table class="table" style="text-align: center;">
                     <thead>
                     <tr class="table-dark">
@@ -36,7 +47,7 @@
                         <td style="width: 12%;">시작 일자</td>
                         <td style="width: 12%;">종료 일자</td>
                         <td style="width: 8%;">휴가 기간</td>
-                        <td style="width: 8%;">시간 구분</td>
+                        <td style="width: 8%;">휴가 구분</td>
                         <td style="width: 14%;">비상 연락처</td>
                         <td style="width: 6%;">결재</td>
                     </tr>
@@ -59,11 +70,15 @@
                         <td style="vertical-align: middle;">{{ myreg.get_leavecat_display }}</td>
                         <td style="vertical-align: middle;">{{ myreg.emgnum }}</td>
                         <td style="vertical-align: middle;">
-                            <form id="approval" method="get" action="{% url 'leave:aprv' %}">
+                            <form id="approval_ok" method="get" action="{% url 'leave:aprv' %}">
                                 <input type="hidden" id="myreg_id" name="myreg_id" value="{{ myreg.id }}"/>
-                                <input type="hidden" id="result" name="result" value=""/>
-                                <button type="submit" class="btn btn-success" onclick="btn_click('ok');">승인</button>
-                                <button type="submit" class="btn btn-danger" onclick="btn_click('rtn');" style="margin-top: 1rem;">반려</button>
+                                <input type="hidden" id="result" name="result" value="ok"/>
+                                <input type="submit" id="ok" class="btn btn-success" value="승인">
+                            </form>
+                            <form id="approval_rtn" method="get" action="{% url 'leave:aprv' %}">
+                                <input type="hidden" id="myreg_id" name="myreg_id" value="{{ myreg.id }}"/>
+                                <input type="hidden" id="result" name="result" value="rtn"/>
+                                <input type="submit" id="rtn" class="btn btn-danger" style="margin-top: 1rem;" value="반려">
                             </form>
                         </td>
                     </tr>
@@ -156,12 +171,4 @@ btn_search.addEventListener('click', function() {
         }
     }
 </script>
-
-<script>
-function btn_click(str){
-    document.getElementById("result").value = str;
-    document.getElementById('approval').submit();
-}
-</script>
-
 {% endblock %}
