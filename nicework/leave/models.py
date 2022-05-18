@@ -30,9 +30,10 @@ class LevHistory(models.Model): # 신청된 휴가
     leavecat = models.CharField(max_length=2, choices=LEAVECAT_CHOICES, default='AL') # 휴가 시간구분
     phoneNumberRegex = RegexValidator(regex = r"^01([0|1|6|7|8|9]?)-?([0-9]{3,4})-?([0-9]{4})$")
     emgnum = models.CharField(validators = [phoneNumberRegex], max_length=15,) # 비상 연락처
-    is_approved = models.BooleanField(default=False) # 매니저 승인여부
+    APPROVAL_CHOICES = (('1', '대기'), ('2', '반려'), ('3', '승인'))
+    approval = models.CharField(max_length=1, choices=APPROVAL_CHOICES, default='1') # 결재 상태
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "{0} : {1} ~ {2} ({3}일, {4}) [{5}]".format(self.employee.realname, self.startdate, self.enddate, self.leaveterm, self.leavecat, self.is_approved)
+        return "{0} : {1} ~ {2} ({3}일, {4}) [{5}]".format(self.employee.realname, self.startdate, self.enddate, self.leaveterm, self.leavecat, self.approval)

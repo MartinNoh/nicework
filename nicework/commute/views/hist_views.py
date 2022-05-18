@@ -6,6 +6,7 @@ from ..models import CmtHistory
 from django.core.paginator import Paginator
 import datetime
 from django.db.models import Q
+from operator import itemgetter
 
 
 @login_required(login_url='common:login')
@@ -58,9 +59,11 @@ def situation(request):
     commuting_list = []
     for i in commuters:
         commuting_list.append(i.employee.realname)
-
+    mgr_or_admin = MyUser.objects.filter(Q(is_admin=True) | Q(is_mgr=True))
+    for i in mgr_or_admin:
+        commuting_list.append(i.realname)
     noncommute_users = MyUser.objects.filter().exclude(realname__in=commuting_list).order_by('realname')
-    today_leave_list = LevHistory.objects.filter(startdate__lte=today, enddate__gte=today, is_approved=True).order_by('startdate')
+    today_leave_list = LevHistory.objects.filter(startdate__lte=today, enddate__gte=today, approval='3').order_by('startdate')
     leave_dict = {'AL':'연차', 'MO':'오전 반차', 'AO':'오후 반차', 'CV':'경조 휴가', 'OL':'공가', 'EL':'조퇴', 'AB':'결근', 'SL':'병가'}
     noncommuters = []
     for i in noncommute_users:
@@ -68,7 +71,8 @@ def situation(request):
         for j in today_leave_list:
             if str(j.employee_id) == str(i.id):
                 todaycat = leave_dict.get(str(j.leavecat))
-        noncommuters.append({'realname':i.realname, 'todaycat':todaycat, 'openingtime':i.openingtime})
+        noncommuters.append({'todaycat':todaycat, 'openingtime':i.openingtime, 'realname':i.realname})
+    noncommuters = sorted(noncommuters, key=itemgetter('todaycat', 'openingtime', 'realname'))
      
     context = {'commuters': commuters, 'noncommuters': noncommuters}
     return render(request, 'commute/commute_situ.html', context)

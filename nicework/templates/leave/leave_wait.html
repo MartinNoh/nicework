@@ -8,8 +8,8 @@
     <div class="container">
 
         <div class="section-title" data-aos="fade-up" style="margin-top: 6%;">
-            <h2>휴가신청 확인</h2>
-            <p><strong style="color: blue;">휴가</strong> 신청했던 내역 확인,<strong style="color: blue;">서식</strong> 다운로드을 하실 수 있습니다.</p>
+            <h2>휴가 결재대기 관리</h2>
+            <p><strong style="color: blue;">결재를 대기 중인 내역</strong>을 확인하고 승인 또는 반려 처리합니다.</p>
         </div>
 
         <div class="row" data-aos="fade-up" data-aos-delay="150" style="margin-top: 2.5rem;">
@@ -29,17 +29,16 @@
                 <table class="table" style="text-align: center;">
                     <thead>
                     <tr class="table-dark">
-                        <td>번호</td>
-                        <td>작성 일자</td>
-                        <td>휴가 사유</td>
-                        <td>시작 일자</td>
-                        <td>종료 일자</td>
-                        <td>휴가 기간</td>
-                        <td>시간 구분</td>
-                        <td>비상 연락처</td>
-                        <td>승인 여부</td>
-                        <td>서식 다운로드</td>
-                        <td>삭제</td>
+                        <td style="width: 5%;">번호</td>
+                        <td style="width: 8%;">작성자</td>
+                        <td style="width: 12%;">작성 일자</td>
+                        <td style="width: 15%;">휴가 사유</td>
+                        <td style="width: 12%;">시작 일자</td>
+                        <td style="width: 12%;">종료 일자</td>
+                        <td style="width: 8%;">휴가 기간</td>
+                        <td style="width: 8%;">시간 구분</td>
+                        <td style="width: 14%;">비상 연락처</td>
+                        <td style="width: 6%;">결재</td>
                     </tr>
                     </thead>
                     <tbody>
@@ -51,6 +50,7 @@
                             <!-- 번호 = 전체건수 - 시작인덱스 - 현재인덱스 + 1 -->
                             {{ mylist.paginator.count|sub:mylist.start_index|sub:forloop.counter0|add:1 }}
                         </td>
+                        <td style="vertical-align: middle;">{{ myreg.employee.realname}}</td>
                         <td style="vertical-align: middle;">{{ myreg.created_at }}</td>
                         <td style="vertical-align: middle;">{{ myreg.reason }}</td>
                         <td style="vertical-align: middle;">{{ myreg.startdate }}</td>
@@ -58,34 +58,14 @@
                         <td style="vertical-align: middle;">{{ myreg.leaveterm }}</td>
                         <td style="vertical-align: middle;">{{ myreg.get_leavecat_display }}</td>
                         <td style="vertical-align: middle;">{{ myreg.emgnum }}</td>
-
-                        {% if myreg.approval == '3' %}
-                        <td style="vertical-align: middle;"><span class="glyphicon glyphicon-ok" aria-hidden="true" style="color: green;"></span></td>
-                        {% elif myreg.approval == '2' %}
-                        <td style="vertical-align: middle;"><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;"></span></td>
-                        {% else %}
-                        <td style="vertical-align: middle;"><span class="glyphicon glyphicon-time" aria-hidden="true" style="color: orange;"></span></td>
-                        {% endif %}
-
                         <td style="vertical-align: middle;">
-                            <form method="post" action="{% url 'leave:hist' %}">
-                                {% csrf_token %}
-                                <input type="hidden" id="created_at" name="created_at" value="{{ myreg.created_at }}"/>
-                                <input type="hidden" id="reason" name="reason" value="{{ myreg.reason }}"/>
-                                <input type="hidden" id="startdate" name="startdate" value="{{ myreg.startdate }}"/>
-                                <input type="hidden" id="enddate" name="enddate" value="{{ myreg.enddate }}"/>
-                                <input type="hidden" id="leaveterm" name="leaveterm" value="{{ myreg.leaveterm }}"/>
-                                <input type="hidden" id="leavecat" name="leavecat" value="{{ myreg.get_leavecat_display }}"/>
-                                <button type="submit" class="btn btn-light">다운로드</button>
+                            <form id="approval" method="get" action="{% url 'leave:aprv' %}">
+                                <input type="hidden" id="myreg_id" name="myreg_id" value="{{ myreg.id }}"/>
+                                <input type="hidden" id="result" name="result" value=""/>
+                                <button type="submit" class="btn btn-success" onclick="btn_click('ok');">승인</button>
+                                <button type="submit" class="btn btn-danger" onclick="btn_click('rtn');" style="margin-top: 1rem;">반려</button>
                             </form>
                         </td>
-
-                        {% if myreg.approval == '3' %}
-                        <td style="vertical-align: middle;">불가</td>
-                        {% else %}
-                        <td style="vertical-align: middle;"><a href="javascript:void(0)" class="delete" data-uri="{% url 'leave:delt' myreg.id  %}"><span class="glyphicon glyphicon-trash" aria-hidden="true" style="color: #d9534f;"></span></a></td>
-                        {% endif %}
-                        
                     </tr>
                     {% endfor %}
                     {% else %}
@@ -95,9 +75,6 @@
                     {% endif %}
                     </tbody>
                 </table>
-
-                <input type="hidden" value="{{ is_download }}" id="is_download">
-                <input type="hidden" value="{{ source_html }}" id="source-html">
                 
                 <!-- 페이징처리 시작 -->
                 <ul class="pagination justify-content-center">
@@ -140,7 +117,7 @@
                 <!-- 페이징처리 끝 -->
 
                 <!-- 검색 Hidden Form 시작 -->
-                <form id="searchForm" method="get" action="{% url 'leave:hist' %}">
+                <form id="searchForm" method="get" action="{% url 'leave:wait' %}">
                     <input type="hidden" id="kw" name="kw" value="{{ kw|default_if_none:'' }}">
                     <input type="hidden" id="page" name="page" value="{{ page }}">
                 </form>
@@ -151,45 +128,11 @@
     </div>
 </section><!-- End About Us Section -->
 <input type="hidden" id="realname" name="realname" value=""/>
-<input type="hidden" id="source-html" name="source-html" value=""/>
 
 {% endblock %}
 
 
 {% block script %}
-<script>
-    window.onload = function() {
-        if(document.getElementById("is_download").value == "True"){
-            alert("다운로드한 서식을 출력하여, 내용 확인 및 서명 후 담당자에게 확인 바랍니다.")
-            htmlToFile();
-            document.getElementById("is_download").value == "False";
-        }
-    };
-
-	function htmlToFile() {
-		var sourceHTML = document.getElementById("source-html").value;
-		var source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
-		var fileDownload = document.createElement("a");
-		document.body.appendChild(fileDownload);
-		fileDownload.href = source;
-		fileDownload.download = '(주)광주인공지능센터_휴가신청서.' + 'hwp';
-		fileDownload.click();
-		document.body.removeChild(fileDownload);
-	}
-</script>
-
-<script type='text/javascript'>
-const delete_elements = document.getElementsByClassName("delete");
-Array.from(delete_elements).forEach(function(element) {
-    element.addEventListener('click', function() {
-        if(confirm("정말로 삭제하시겠습니까?")) {
-            location.href = this.dataset.uri;
-        };
-    });
-});
-</script>
-
-
 <script type='text/javascript'>
 const page_elements = document.getElementsByClassName("page-link");
 Array.from(page_elements).forEach(function(element) {
@@ -212,5 +155,13 @@ btn_search.addEventListener('click', function() {
             document.getElementById('btn_search').click()
         }
     }
-    </script>
+</script>
+
+<script>
+function btn_click(str){
+    document.getElementById("result").value = str;
+    document.getElementById('approval').submit();
+}
+</script>
+
 {% endblock %}

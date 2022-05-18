@@ -11,6 +11,9 @@ import datetime
 def registration(request):
     # 오늘 등록했던 일지 가져오기
     myuser = get_object_or_404(MyUser, email=request.user.email)
+    if myuser.is_mgr or myuser.is_admin:
+        return redirect('bsnlog:regt')
+        
     today_start = datetime.datetime.combine(datetime.date.today(), datetime.time(0, 0, 0))
     today_end = datetime.datetime.combine(datetime.date.today(), datetime.time(23, 59 ,59))
     mylist = BslHistory.objects.filter(employee=myuser, created_at__gte=today_start, created_at__lte=today_end).order_by('-created_at')

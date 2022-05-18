@@ -14,7 +14,7 @@
 
         <div class="row" data-aos="fade-up" data-aos-delay="150" style="margin-top: 2.5rem;">
             <div class="col-lg-4">
-                <p style="margin: 14px 0 0 0;">로그인 계정 : <b>{{ myuser.email }}</b></p>
+                <p style="margin: 14px 0 0 0;">현재 로그인 계정 : <b>{{ myuser.email }}</b></p>
             </div>
             <div class="col-lg-8 d-flex justify-content-end">
                 <input type="text" id="search_kw" class="form-control" value="{{ kw|default_if_none:'' }}" onkeyup="enterkey();" autofocus style="width: 30%;">

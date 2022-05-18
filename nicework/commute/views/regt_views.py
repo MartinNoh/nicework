@@ -13,7 +13,9 @@ from pytimekr import pytimekr
 def registration(request, check_result):
     # 로그인한 계정
     myuser = get_object_or_404(MyUser, email=request.user.email)
-
+    if myuser.is_mgr or myuser.is_admin:
+        return redirect('commute:situ')
+        
     # 오늘 관련
     today = datetime.date.today()
     today_start = datetime.datetime.combine(today, datetime.time(0, 0, 0))
@@ -35,21 +37,10 @@ def registration(request, check_result):
         breaktime = 0
     h_diff = (t_diff-breaktime)/2    
 
-    # 이번 주 잔여 근로시간, 잔여 연장근로시간
-    total_worktime = 0
-    total_overtime = 0
-    week_list = CmtHistory.objects.filter(employee=myuser, weeknum=today_week).order_by('-startdatetime')
-    if week_list:
-        for i in week_list:
-            total_worktime += i.workinghours
-            total_overtime += i.overtime
-    remain_worktime = int(40 - total_worktime)
-    remain_overtime = int(12 - total_overtime)
-
     # 휴일여부, 시업시간, 종업 시간
     holiday_list = pytimekr.holidays(datetime.datetime.now().year)
     todaycat_dict = {"AL":"연차", "MO":"오전 반차", "AO":"오후 반차", "CV":"경조 휴가", "OL":"공가", "EL":"조퇴", "AB":"결근", "SL":"병가", "HD":"공휴일", "WE":"주말", "WD":"평일"}
-    leave_today_list = LevHistory.objects.filter(employee=myuser, startdate__lte=today, enddate__gte=today, is_approved=True).order_by('-startdate')
+    leave_today_list = LevHistory.objects.filter(employee=myuser, startdate__lte=today, enddate__gte=today, approval='3').order_by('-startdate')
     modified_closingtime = None
     modified_openingtime = None
     if today in holiday_list:
@@ -60,12 +51,14 @@ def registration(request, check_result):
         leavecat = leave_today_list[0].leavecat
         if str(leavecat) == 'MO':
             todaycat = str(leavecat)
-            modified_openingtime = openingtime + datetime.timedelta(hours=h_diff)
+            modified_openingtime = datetime.datetime.combine(today, openingtime) + datetime.timedelta(hours=h_diff)
+            modified_openingtime = modified_openingtime.time()
             modified_closingtime = closingtime
         elif str(leavecat) == 'AO':
             todaycat = str(leavecat)
             modified_openingtime = openingtime
-            modified_closingtime = closingtime - datetime.timedelta(hours=h_diff)
+            modified_closingtime = datetime.datetime.combine(today, closingtime) - datetime.timedelta(hours=h_diff)
+            modified_closingtime = modified_closingtime.time()
         else:
             todaycat = str(leavecat)
     else:
@@ -116,7 +109,7 @@ def registration(request, check_result):
         recent_commute_list[0].is_abnormal = True
         recent_commute_list[0].breaktime = round(breaktime, 1)
         recent_commute_list[0].overtime = round(overtime, 1)
-        recent_commute_list[0].workinghours = round(wk_hours, 1)
+        recent_commute_list[0].workinghours = round((wk_hours-breaktime), 1)
         recent_commute_list[0].save()
     else:
         is_getoff = True if today_commute_list and len(today_commute_list) > 0 else False # if: CASE 1-2, 1-5, else: CASE 1-1, 1-4
@@ -155,11 +148,21 @@ def registration(request, check_result):
         lastwork.enddatetime = timezone.now()
         lastwork.breaktime = round(breaktime, 1)
         lastwork.overtime = round(overtime, 1)
-        lastwork.workinghours = round(wk_hours, 1)
+        lastwork.workinghours = round((wk_hours-breaktime), 1)
         lastwork.save()
 
         return redirect('commute:hist')
 
+    # 이번 주 잔여 근로시간, 잔여 연장근로시간
+    total_worktime = 0
+    total_overtime = 0
+    week_list = CmtHistory.objects.filter(employee=myuser, weeknum=today_week).order_by('-startdatetime')
+    if week_list:
+        for i in week_list:
+            total_worktime += i.workinghours
+            total_overtime += i.overtime
+    remain_worktime = int(40 - total_worktime)
+    remain_overtime = int(12 - total_overtime)
 
     context = {'is_getoff': is_getoff, 'today': today, 'today_week': today_week, 'today_weekday': weekday_dict[str(today_weekday)], 'remain_worktime': remain_worktime, 'remain_overtime': remain_overtime,
                 'closingtime': closingtime, 'openingtime': openingtime, 'todaycat': todaycat_dict[str(todaycat)], 'modified_closingtime': modified_closingtime, 'modified_openingtime':modified_openingtime}

@@ -7,8 +7,8 @@ logger = logging.getLogger(__name__)
 # Create your views here.
 def index(request):
     user_ip = get_client_ip(request)
-    logger.info("접속 PC 외부 IP : " + str(user_ip))
-    context = {}
+    logger.info("접속한 PC의 IP : " + str(user_ip))
+    context = {'is_index': True}
     return render(request, 'common/index.html', context)
 
 
