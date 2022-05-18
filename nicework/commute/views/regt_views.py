@@ -13,7 +13,7 @@ from pytimekr import pytimekr
 def registration(request, check_result):
     # 로그인한 계정
     myuser = get_object_or_404(MyUser, email=request.user.email)
-    if myuser.is_mgr or myuser.is_admin:
+    if myuser.is_manager or myuser.is_admin:
         return redirect('commute:situ')
         
     # 오늘 관련

@@ -37,7 +37,7 @@ def update(request, bsnlog_id):
     businesslog = get_object_or_404(BslHistory, pk=bsnlog_id)
 
     # 관리자 또는 매니저인 경우
-    if myuser.is_mgr | myuser.is_admin:
+    if myuser.is_manager | myuser.is_admin:
         pass
     else:
         # 일지 작성자가 로그인한 계정과 다른지 확인
@@ -52,7 +52,7 @@ def update(request, bsnlog_id):
             businesslog.updated_at = timezone.now()
             businesslog.save()
 
-            if myuser.is_mgr | myuser.is_admin:
+            if myuser.is_manager | myuser.is_admin:
                 return redirect('bsnlog:toth')
             else:
                 return redirect('bsnlog:hist')
@@ -69,7 +69,7 @@ def delete(request, bsnlog_id):
 
     businesslog = get_object_or_404(BslHistory, pk=bsnlog_id)
     # 관리자 또는 매니저인 경우
-    if myuser.is_mgr | myuser.is_admin:
+    if myuser.is_manager | myuser.is_admin:
         pass
     else:
         if request.user != businesslog.employee:

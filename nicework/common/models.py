@@ -6,7 +6,7 @@ from django.contrib.auth.models import (
 
 
 class MyUserManager(BaseUserManager):
-    def create_user(self, email, realname, phonenum, effcdate, openingtime, closingtime, password=None):
+    def create_user(self, email, realname, phonenum, department, rank, effcdate, openingtime, closingtime, password=None):
         """
         Creates and saves a User with the given email, date of
         birth and password.
@@ -18,6 +18,8 @@ class MyUserManager(BaseUserManager):
             email=self.normalize_email(email),
             realname=realname,
             phonenum=phonenum,
+            department=department,
+            rank=rank,
             effcdate=effcdate,
             openingtime=openingtime,
             closingtime=closingtime
@@ -27,7 +29,7 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, realname, phonenum, effcdate, openingtime, closingtime, password=None):
+    def create_superuser(self, email, realname, phonenum, department, rank, effcdate, openingtime, closingtime, password=None):
         """
         Creates and saves a superuser with the given email, date of
         birth and password.
@@ -37,11 +39,13 @@ class MyUserManager(BaseUserManager):
             password=password,
             realname=realname,
             phonenum=phonenum,
+            department=department,
+            rank=rank,
             effcdate=effcdate,
             openingtime=openingtime,
             closingtime=closingtime
         )
-        user.is_mgr = True
+        user.is_manager = True
         user.is_admin = True
         user.save(using=self._db)
         return user
@@ -64,13 +68,17 @@ class MyUser(AbstractBaseUser):
         max_length=15,
         unique = True
     )
+    RANK_CHOICES = (('AS', '주임'), ('SN', '대리'), ('PC', '책임'), ('CF', '수석'))
+    rank = models.CharField(verbose_name='직급', max_length=2, choices=RANK_CHOICES, default='AS')
+    DEPARTMENT_CHOICES = (('DEV', '개발팀'), ('KNG', '지식큐레이션팀'))
+    department = models.CharField(verbose_name='부서', max_length=3, choices=DEPARTMENT_CHOICES, default='KNG')
     effcdate = models.DateField(verbose_name='입사 일자')
     openingtime = models.TimeField(verbose_name='평소 근무 시작시간')
     closingtime = models.TimeField(verbose_name='평소 근무 종료시간')
     adminmemo = models.TextField(verbose_name='관리자 메모', max_length=1000, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
-    is_mgr = models.BooleanField(default=False)
+    is_manager = models.BooleanField(default=False)
     is_sbstt = models.BooleanField(verbose_name='연장근로 대체휴가 변환', default=True)
     is_over80p = models.BooleanField(verbose_name='출근 1년간 80% 이상', default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -79,7 +87,7 @@ class MyUser(AbstractBaseUser):
     objects = MyUserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['realname', 'phonenum', 'effcdate', 'openingtime', 'closingtime']
+    REQUIRED_FIELDS = ['realname', 'phonenum', 'department', 'rank', 'effcdate', 'openingtime', 'closingtime']
 
     def __str__(self):
         return self.email

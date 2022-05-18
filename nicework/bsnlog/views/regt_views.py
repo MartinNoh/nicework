@@ -11,7 +11,7 @@ import datetime
 def registration(request):
     # 오늘 등록했던 일지 가져오기
     myuser = get_object_or_404(MyUser, email=request.user.email)
-    if myuser.is_mgr or myuser.is_admin:
+    if myuser.is_manager or myuser.is_admin:
         return redirect('bsnlog:regt')
         
     today_start = datetime.datetime.combine(datetime.date.today(), datetime.time(0, 0, 0))

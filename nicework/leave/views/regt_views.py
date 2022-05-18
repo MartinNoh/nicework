@@ -13,7 +13,7 @@ from dateutil.relativedelta import relativedelta
 def registration(request):
     # 오전반차의 경우 종료시간, 오후반차의 경우 시작시간 계산
     myuser = get_object_or_404(MyUser, email=request.user.email)
-    if myuser.is_mgr or myuser.is_admin:
+    if myuser.is_manager or myuser.is_admin:
         return redirect('leave:wait')
 
     closing_time = myuser.closingtime

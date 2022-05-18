@@ -55,7 +55,7 @@ def delete(request, myreg_id):
     myuser = get_object_or_404(MyUser, email=request.user.email)
     leave = get_object_or_404(LevHistory, pk=myreg_id)
     # 관리자 또는 매니저인 경우
-    if myuser.is_mgr | myuser.is_admin:
+    if myuser.is_manager | myuser.is_admin:
         pass
     else:
         if request.user != leave.employee:
@@ -104,7 +104,7 @@ def approval(request):
     result = request.GET.get('result')
     leave = get_object_or_404(LevHistory, pk=myreg_id)
     # 관리자 또는 매니저인 경우
-    if myuser.is_mgr or myuser.is_admin:
+    if myuser.is_manager or myuser.is_admin:
         if result == "ok":
             leave.approval = "3"
             leave.save()

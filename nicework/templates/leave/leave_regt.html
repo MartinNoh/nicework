@@ -122,107 +122,109 @@
     </div>
 
   </section>
+{% endblock %}
 
-  <script>
+{% block script %}
+<script>
       
-    $("#startdate").on("propertychange change keyup paste", function(){
-        if($("#startdate").val() != $("#enddate").val()){
-            // alert("다른 날짜입니다.");
+$("#startdate").on("propertychange change keyup paste", function(){
+    if($("#startdate").val() != $("#enddate").val()){
+        // alert("다른 날짜입니다.");
 
-            // if startdate > enddate : 알림하고 입력 값 초기화할 것
-            var startDate = new Date($("#startdate").val());
-            var endDate = new Date($("#enddate").val());
-            if (startDate > endDate){
-                alert("종료 일자가 시작 일자보다 앞설 수 없습니다.");
-                $("#enddate").val('');
-            }
+        // if startdate > enddate : 알림하고 입력 값 초기화할 것
+        var startDate = new Date($("#startdate").val());
+        var endDate = new Date($("#enddate").val());
+        if (startDate > endDate){
+            alert("종료 일자가 시작 일자보다 앞설 수 없습니다.");
+            $("#enddate").val('');
+        }
 
-            var difference= Math.abs(endDate-startDate);
-            days = difference/(1000 * 3600 * 24)
-            if (days > $("#remained").val()){
-                alert("잔여 연차 일수를 초과하였습니다.");
-                $("#enddate").val('');
-            }
+        var difference= Math.abs(endDate-startDate);
+        days = difference/(1000 * 3600 * 24)
+        if (days > $("#remained").val()){
+            alert("잔여 연차 일수를 초과하였습니다.");
+            $("#enddate").val('');
+        }
 
-            // if startdate != enddate : leavecat을 연차만 선택 가능하게 할 것
-            document.querySelectorAll("#leavecat option").forEach(opt => {
-                if (opt.value == "MO" || opt.value == "AO" || opt.value == "EL") {
-                    opt.hidden = true;
-                }else{
-                    opt.hidden = false;
-                    if(opt.value == "AL"){
-                        opt.selected = true;
-                    }
-                }
-            });
-        }else{
-            document.querySelectorAll("#leavecat option").forEach(opt => {
+        // if startdate != enddate : leavecat을 연차만 선택 가능하게 할 것
+        document.querySelectorAll("#leavecat option").forEach(opt => {
+            if (opt.value == "MO" || opt.value == "AO" || opt.value == "EL") {
+                opt.hidden = true;
+            }else{
                 opt.hidden = false;
-            });
-        }
-    });
-    $("#enddate").on("propertychange change keyup paste", function(){
-        if($("#startdate").val() != $("#enddate").val()){
-            // alert("다른 날짜입니다.");
-            
-            // if startdate > enddate : 알림하고 입력 값 초기화할 것
-            var startDate = new Date($("#startdate").val());
-            var endDate = new Date($("#enddate").val());
-            if (startDate > endDate){
-                alert("종료 일자가 시작 일자보다 앞설 수 없습니다.");
-                $("#enddate").val('');
-            }
-
-            var difference= Math.abs(endDate-startDate);
-            days = difference/(1000 * 3600 * 24)
-            if (days > $("#remained").val()){
-                alert("잔여 연차 일수를 초과하였습니다.");
-                $("#enddate").val('');
-            }
-
-            // if startdate != enddate : leavecat을 연차만 선택 가능하게 할 것
-            document.querySelectorAll("#leavecat option").forEach(opt => {
-                if (opt.value == "MO" || opt.value == "AO" || opt.value == "EL") {
-                    opt.hidden = true;
-                }else{
-                    opt.hidden = false;
-                    if(opt.value == "AL"){
-                        opt.selected = true;
-                    }
+                if(opt.value == "AL"){
+                    opt.selected = true;
                 }
-            });
-        }else{
-            document.querySelectorAll("#leavecat option").forEach(opt => {
+            }
+        });
+    }else{
+        document.querySelectorAll("#leavecat option").forEach(opt => {
+            opt.hidden = false;
+        });
+    }
+});
+$("#enddate").on("propertychange change keyup paste", function(){
+    if($("#startdate").val() != $("#enddate").val()){
+        // alert("다른 날짜입니다.");
+        
+        // if startdate > enddate : 알림하고 입력 값 초기화할 것
+        var startDate = new Date($("#startdate").val());
+        var endDate = new Date($("#enddate").val());
+        if (startDate > endDate){
+            alert("종료 일자가 시작 일자보다 앞설 수 없습니다.");
+            $("#enddate").val('');
+        }
+
+        var difference= Math.abs(endDate-startDate);
+        days = difference/(1000 * 3600 * 24)
+        if (days > $("#remained").val()){
+            alert("잔여 연차 일수를 초과하였습니다.");
+            $("#enddate").val('');
+        }
+
+        // if startdate != enddate : leavecat을 연차만 선택 가능하게 할 것
+        document.querySelectorAll("#leavecat option").forEach(opt => {
+            if (opt.value == "MO" || opt.value == "AO" || opt.value == "EL") {
+                opt.hidden = true;
+            }else{
                 opt.hidden = false;
-            });
-        }
-    });
+                if(opt.value == "AL"){
+                    opt.selected = true;
+                }
+            }
+        });
+    }else{
+        document.querySelectorAll("#leavecat option").forEach(opt => {
+            opt.hidden = false;
+        });
+    }
+});
 
 
-    $("#leavecat").on("propertychange change keyup paste", function(){
-        if ($("#leavecat option:selected").val() == "EL"){ // 조퇴
-            $("#starttime").attr("readonly",false);
-            var today = new Date();   
-            var hours = ('0' + today.getHours()).slice(-2); 
-            var minutes = ('0' + today.getMinutes()).slice(-2);
-            var seconds = ('0' + today.getSeconds()).slice(-2); 
-            var timeString = hours + ':' + minutes;
-            console.log(timeString);
-            $("#starttime").val(timeString);
-            $("#endtime").val($("#closing_time").val())
-        }else if ($("#leavecat option:selected").val() == "MO"){ // 오전 반차
-            $("#starttime").attr('readonly', true);
-            $("#starttime").val($("#opening_time").val())
-            $("#endtime").val($("#mo_endtime").val())
-        }else if ($("#leavecat option:selected").val() == "AO"){ // 오후 반차
-            $("#starttime").attr('readonly', true);
-            $("#starttime").val($("#ao_starttime").val())
-            $("#endtime").val($("#closing_time").val())
-        }else{
-            $("#starttime").attr('readonly', true);
-            $("#starttime").val($("#opening_time").val())
-            $("#endtime").val($("#closing_time").val())
-        }
-    });
+$("#leavecat").on("propertychange change keyup paste", function(){
+    if ($("#leavecat option:selected").val() == "EL"){ // 조퇴
+        $("#starttime").attr("readonly",false);
+        var today = new Date();   
+        var hours = ('0' + today.getHours()).slice(-2); 
+        var minutes = ('0' + today.getMinutes()).slice(-2);
+        var seconds = ('0' + today.getSeconds()).slice(-2); 
+        var timeString = hours + ':' + minutes;
+        console.log(timeString);
+        $("#starttime").val(timeString);
+        $("#endtime").val($("#closing_time").val())
+    }else if ($("#leavecat option:selected").val() == "MO"){ // 오전 반차
+        $("#starttime").attr('readonly', true);
+        $("#starttime").val($("#opening_time").val())
+        $("#endtime").val($("#mo_endtime").val())
+    }else if ($("#leavecat option:selected").val() == "AO"){ // 오후 반차
+        $("#starttime").attr('readonly', true);
+        $("#starttime").val($("#ao_starttime").val())
+        $("#endtime").val($("#closing_time").val())
+    }else{
+        $("#starttime").attr('readonly', true);
+        $("#starttime").val($("#opening_time").val())
+        $("#endtime").val($("#closing_time").val())
+    }
+});
 </script>
 {% endblock %}

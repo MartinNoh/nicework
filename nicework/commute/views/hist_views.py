@@ -59,7 +59,7 @@ def situation(request):
     commuting_list = []
     for i in commuters:
         commuting_list.append(i.employee.realname)
-    mgr_or_admin = MyUser.objects.filter(Q(is_admin=True) | Q(is_mgr=True))
+    mgr_or_admin = MyUser.objects.filter(Q(is_admin=True) | Q(is_manager=True))
     for i in mgr_or_admin:
         commuting_list.append(i.realname)
     noncommute_users = MyUser.objects.filter().exclude(realname__in=commuting_list).order_by('realname')

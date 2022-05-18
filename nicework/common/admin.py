@@ -16,7 +16,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = MyUser
-        fields = ('email', 'realname', 'phonenum', 'effcdate', 'openingtime', 'closingtime')
+        fields = ('email', 'realname', 'phonenum', 'rank', 'department', 'effcdate', 'openingtime', 'closingtime')
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -42,13 +42,17 @@ class UserChangeForm(forms.ModelForm):
     """
     password = ReadOnlyPasswordHashField()
 
+    RANK_CHOICES = (('AS', '주임'), ('SN', '대리'), ('PC', '책임'), ('CF', '수석'))
+    rank = forms.ChoiceField(choices=RANK_CHOICES)
+    DEPARTMENT_CHOICES = (('DEV', '개발팀'), ('KNG', '지식큐레이션팀'))
+    department = forms.ChoiceField(choices=DEPARTMENT_CHOICES)
     effcdate = forms.DateField(widget=forms.widgets.DateInput(format="%Y-%m-%d"))
     openingtime = forms.TimeField(widget=forms.widgets.TimeInput(format="%H:%M:%S"))
     closingtime = forms.TimeField(widget=forms.widgets.TimeInput(format="%H:%M:%S"))
 
     class Meta:
         model = MyUser
-        fields = ('realname', 'phonenum', 'effcdate', 'openingtime', 'closingtime', 'adminmemo')
+        fields = ('realname', 'phonenum', 'rank', 'department', 'effcdate', 'openingtime', 'closingtime', 'adminmemo')
 
 
 class UserAdmin(BaseUserAdmin):
@@ -59,12 +63,12 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('email', 'realname', 'openingtime', 'closingtime', 'is_mgr', 'is_admin', 'is_sbstt', 'is_over80p')
-    list_filter = ('is_mgr', 'is_admin',)
+    list_display = ('email', 'realname', 'openingtime', 'closingtime', 'is_manager', 'is_admin', 'is_sbstt', 'is_over80p')
+    list_filter = ('is_manager', 'is_admin',)
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('realname', 'phonenum', 'effcdate', 'openingtime', 'closingtime')}),
-        ('Permissions', {'fields': ('is_mgr', 'is_admin',)}),
+        ('Personal info', {'fields': ('realname', 'phonenum', 'department', 'rank', 'effcdate', 'openingtime', 'closingtime')}),
+        ('Permissions', {'fields': ('is_manager', 'is_admin',)}),
         ('Memo', {'fields': ('is_sbstt', 'is_over80p', 'adminmemo',)}),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
@@ -72,7 +76,7 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'realname', 'phonenum', 'effcdate', 'openingtime', 'closingtime', 'password1', 'password2'),
+            'fields': ('email', 'realname', 'phonenum', 'department', 'rank', 'effcdate', 'openingtime', 'closingtime', 'password1', 'password2'),
         }),
     )
     search_fields = ('realname',)
