@@ -22,7 +22,7 @@ def history(request):
     ct = request.GET.get('ct', '') # 검색구분
     kw = request.GET.get('kw', '')  # 검색어
 
-    if dt != '' and  ct != '':
+    if dt != '' and ct != '':
         mylist = mylist.filter(reason__icontains=kw, leavecat__icontains=ct, startdate__gte=dt).distinct()
     elif dt == '' and ct != '':
         mylist = mylist.filter(reason__icontains=kw, leavecat__icontains=ct).distinct()
@@ -72,7 +72,7 @@ def waiting(request):
     ct = request.GET.get('ct', '') # 검색구분
     kw = request.GET.get('kw', '')  # 검색어
 
-    if dt != '' and  ct != '':
+    if dt != '' and ct != '':
         mylist = mylist.filter(reason__icontains=kw, leavecat__icontains=ct, startdate__gte=dt).distinct()
     elif dt == '' and ct != '':
         mylist = mylist.filter(reason__icontains=kw, leavecat__icontains=ct).distinct()
@@ -149,7 +149,7 @@ def totalhistory(request):
     ct = request.GET.get('ct', '') # 검색구분
     kw = request.GET.get('kw', '')  # 검색어
 
-    if dt != '' and  ct != '':
+    if dt != '' and ct != '':
         mylist = mylist.filter(reason__icontains=kw, leavecat__icontains=ct, startdate__gte=dt).distinct()
     elif dt == '' and ct != '':
         mylist = mylist.filter(reason__icontains=kw, leavecat__icontains=ct).distinct()

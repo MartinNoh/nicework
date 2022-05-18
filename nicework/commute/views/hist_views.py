@@ -28,8 +28,8 @@ def history(request):
     dt = request.GET.get('dt', '') # 검색일자
     ct = request.GET.get('ct', '') # 검색구분
     kw = request.GET.get('kw', 0)  # 오버타임
-
-    if dt != '' and  ct != '':
+    
+    if dt!='' and ct!='':
         mylist = mylist.filter(overtime__gte=kw, todaycat__icontains=ct, startdatetime__gte=dt).distinct()
     elif dt == '' and ct != '':
         mylist = mylist.filter(overtime__gte=kw, todaycat__icontains=ct).distinct()
@@ -96,7 +96,7 @@ def totalhistory(request):
     ct = request.GET.get('ct', '') # 검색구분
     kw = request.GET.get('kw', 0)  # 오버타임
 
-    if dt != '' and  ct != '':
+    if dt!='' and ct!='':
         mylist = mylist.filter(overtime__gte=kw, todaycat__icontains=ct, startdatetime__gte=dt).distinct()
     elif dt == '' and ct != '':
         mylist = mylist.filter(overtime__gte=kw, todaycat__icontains=ct).distinct()

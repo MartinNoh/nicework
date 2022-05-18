@@ -99,12 +99,3 @@ def totalhistory(request):
 
     context = {'myuser': myuser, 'mylist': page_obj, 'page': page, 'kw': kw, 'dt': dt}
     return render(request, 'bsnlog/bsnlog_toth.html', context)
-
-
-def validate_date(date_text):
-    try:
-        datetime.datetime.strptime(date_text,"%Y-%m-%d")
-        return True
-    except ValueError:
-        print("Incorrect data format({0}), should be YYYY-MM-DD".format(date_text))
-        return False
