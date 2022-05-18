@@ -201,9 +201,11 @@ def get_leave_hwp(data, myuser):
     enddate = data.get('enddate')
     leaveterm = data.get('leaveterm')
     leavecat = data.get('leavecat')
+    rank_dict = {'AS': '주임', 'SN': '대리', 'PC': '책임', 'CF': '수석'}
+    department_dict = {'DEV': '개발팀', 'KNG': '지식큐레이션팀'}
     r = r.replace("data01", str(myuser.realname))
-    r = r.replace("data02", "주임")
-    r = r.replace("data03", "지식큐레이션팀")
+    r = r.replace("data02", rank_dict[str(myuser.rank)])
+    r = r.replace("data03", department_dict[str(myuser.department)])
     if leavecat == "연차":
         r = r.replace("data04", "O")
         r = r.replace("data05", "&nbsp;&nbsp;")

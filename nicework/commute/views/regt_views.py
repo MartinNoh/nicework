@@ -164,7 +164,7 @@ def registration(request, check_result):
     remain_worktime = int(40 - total_worktime)
     remain_overtime = int(12 - total_overtime)
 
-    context = {'is_getoff': is_getoff, 'today': today, 'today_week': today_week, 'today_weekday': weekday_dict[str(today_weekday)], 'remain_worktime': remain_worktime, 'remain_overtime': remain_overtime,
+    context = {'myuser':myuser, 'is_getoff': is_getoff, 'today': today, 'today_week': today_week, 'today_weekday': weekday_dict[str(today_weekday)], 'remain_worktime': remain_worktime, 'remain_overtime': remain_overtime,
                 'closingtime': closingtime, 'openingtime': openingtime, 'todaycat': todaycat_dict[str(todaycat)], 'modified_closingtime': modified_closingtime, 'modified_openingtime':modified_openingtime}
 
     return render(request, 'commute/commute_regt.html', context)

@@ -11,8 +11,6 @@ import datetime
 def registration(request):
     # 오늘 등록했던 일지 가져오기
     myuser = get_object_or_404(MyUser, email=request.user.email)
-    if myuser.is_manager or myuser.is_admin:
-        return redirect('bsnlog:regt')
         
     today_start = datetime.datetime.combine(datetime.date.today(), datetime.time(0, 0, 0))
     today_end = datetime.datetime.combine(datetime.date.today(), datetime.time(23, 59 ,59))
@@ -33,6 +31,7 @@ def registration(request):
         form = BslHistoryForm()
     
     context = {
+        'myuser': myuser,
         'form': form, 
         'contents': mylist[0].contents if mylist else ''
     }
@@ -41,9 +40,15 @@ def registration(request):
 
 @login_required(login_url='common:login')
 def situation(request):
+    try:
+        myuser = get_object_or_404(MyUser, email=request.user.email)
+    except Exception as e:
+        myuser = ''
+        print(f"Exceiption occured:\n{e}")
+
     # 오늘 등록했던 팀원들의 일지 가져오기
     today_start = datetime.datetime.combine(datetime.date.today(), datetime.time(0, 0, 0))
     today_end = datetime.datetime.combine(datetime.date.today(), datetime.time(23, 59 ,59))
     mylist = BslHistory.objects.filter(created_at__gte=today_start, created_at__lte=today_end).order_by('-created_at')
-    context = {'mylist':mylist}
+    context = {'myuser':myuser, 'mylist':mylist}
     return render(request, 'bsnlog/bsnlog_situ.html', context)

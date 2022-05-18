@@ -1,10 +1,12 @@
 from django.contrib.auth import authenticate, login
-from django.shortcuts import render, redirect
+from common.models import MyUser
+from django.shortcuts import render, redirect, get_object_or_404
 from common.admin import UserCreationForm, UserChangeForm
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
+
 
 def signup(request):
     if request.method == "POST":
@@ -23,6 +25,12 @@ def signup(request):
 
 @login_required(login_url='common:login')
 def mypage(request):
+    try:
+        whois = get_object_or_404(MyUser, email=request.user.email)
+    except Exception as e:
+        whois = ''
+        print(f"Exceiption occured:\n{e}")
+
     if request.method == "POST":
         form = UserChangeForm(request.POST, instance=request.user)
         if form.is_valid():
@@ -35,7 +43,7 @@ def mypage(request):
     else:
         is_fine = True
         form = UserChangeForm(instance=request.user)
-    return render(request, 'common/mypage.html', {'form': form, 'is_fine': is_fine, 'email': request.user.email})
+    return render(request, 'common/mypage.html', {'myuser':whois, 'form': form, 'is_fine': is_fine, 'email': request.user.email})
 
 
 

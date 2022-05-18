@@ -52,6 +52,13 @@ def history(request):
 
 @login_required(login_url='common:login')
 def situation(request):
+
+    try:
+        myuser = get_object_or_404(MyUser, email=request.user.email)
+    except Exception as e:
+        myuser = ''
+        print(f"Exceiption occured:\n{e}")
+
     today = datetime.date.today()
     today_start = datetime.datetime.combine(today, datetime.time(0, 0, 0))
     today_end = datetime.datetime.combine(today, datetime.time(23, 59 ,59))
@@ -74,12 +81,18 @@ def situation(request):
         noncommuters.append({'todaycat':todaycat, 'openingtime':i.openingtime, 'realname':i.realname})
     noncommuters = sorted(noncommuters, key=itemgetter('todaycat', 'openingtime', 'realname'))
      
-    context = {'commuters': commuters, 'noncommuters': noncommuters}
+    context = {'myuser':myuser, 'commuters': commuters, 'noncommuters': noncommuters}
     return render(request, 'commute/commute_situ.html', context)
 
 
 @login_required(login_url='common:login')
 def totalhistory(request):
+    try:
+        myuser = get_object_or_404(MyUser, email=request.user.email)
+    except Exception as e:
+        myuser = ''
+        print(f"Exceiption occured:\n{e}")
+
     # 전체 출근내역 가져오기
     mylist = CmtHistory.objects.filter().order_by('-startdatetime')
 
@@ -106,5 +119,5 @@ def totalhistory(request):
     paginator = Paginator(mylist, 10)
     page_obj = paginator.get_page(page)
 
-    context = {'email': request.user.email, 'mylist': page_obj, 'page': page, 'kw': kw}
+    context = {'myuser':myuser, 'email': request.user.email, 'mylist': page_obj, 'page': page, 'kw': kw}
     return render(request, 'commute/commute_toth.html', context)

@@ -105,7 +105,7 @@ def registration(request):
                 return redirect('leave:hist')
     else: # GET 페이지 요청
         form = LevHistoryForm()
-    context = {'form': form, 'sum_overtime':sum_overtime, 'is_sbstt':is_sbstt, 'sum_annual':sum_annual, 'sum_reward':sum_reward, 'total_leave':total_leave, 'sum_used_leave':sum_used_leave, 'remained':remained,
+    context = {'myuser':myuser, 'form': form, 'sum_overtime':sum_overtime, 'is_sbstt':is_sbstt, 'sum_annual':sum_annual, 'sum_reward':sum_reward, 'total_leave':total_leave, 'sum_used_leave':sum_used_leave, 'remained':remained,
         'opening_time': str(opening_time), 'closing_time': str(closing_time), 'mo_endtime': str(mo_endtime), 'ao_starttime': str(ao_starttime), 't_diff': t_diff, 'h_diff': h_diff}
     
     return render(request, 'leave/leave_regt.html', context)

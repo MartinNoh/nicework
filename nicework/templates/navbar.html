@@ -6,10 +6,10 @@
     <div class="logo">
       <!-- <h1><a href="/">HOME</a></h1> -->
       <!-- Uncomment below if you prefer to use an image logo -->
-      {% if is_index %}
-      <a href="/" style="color: darkblue;"><img src="{% static 'assets/img/logo.png' %}" alt="logo" class="img-fluid" style="width: auto; height: 100%;"></a>
+      {% if myuser %}
+      <a href="/" style="color: darkblue;"><img src="{% static 'assets/img/logo.png' %}" alt="logo" class="img-fluid" style="width: auto; height: 100%;"/>&nbsp;&nbsp;&nbsp;&nbsp;<b>{{ myuser.email }}</b></a>      
       {% else %}
-      <a href="/" style="color: darkblue;"><img src="{% static 'assets/img/logo.png' %}" alt="logo" class="img-fluid" style="width: auto; height: 100%;">&nbsp;&nbsp;<b>Home</b>으로</a>
+      <a href="/" style="color: darkblue;"><img src="{% static 'assets/img/logo.png' %}" alt="logo" class="img-fluid" style="width: auto; height: 100%;"/></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'common:login' %}" style="color: darkblue;">Please <b>Login</b></a>
       {% endif %}
     </div>
 

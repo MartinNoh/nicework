@@ -1,5 +1,5 @@
-from django.shortcuts import render, redirect
-
+from django.shortcuts import render, redirect, get_object_or_404
+from common.models import MyUser
 import logging
 logger = logging.getLogger(__name__)
 
@@ -8,7 +8,13 @@ logger = logging.getLogger(__name__)
 def index(request):
     user_ip = get_client_ip(request)
     logger.info("접속한 PC의 IP : " + str(user_ip))
-    context = {'is_index': True}
+
+    try:
+        myuser = get_object_or_404(MyUser, email=request.user.email)
+    except Exception as e:
+        myuser = ''
+        print(f"Exceiption occured:\n{e}")
+    context = {'myuser': myuser}
     return render(request, 'common/index.html', context)
 
 
